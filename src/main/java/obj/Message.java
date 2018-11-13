@@ -2,25 +2,25 @@ package obj;
 
 public class Message {
 
-    private int senderId;
-    private int receiverId;
+    private User sender;
+    private User receiver;
     private String message;
 
     /**
      * Constructor
      */
-    public Message(int from, int to, String msg) {
-        this.senderId = from;
-        this.receiverId = to;
+    public Message(User from, User to, String msg) {
+        this.sender = from;
+        this.receiver = to;
         this.message = msg;
     }
 
-    public int getSenderId() {
-        return this.senderId;
+    public User getSenderId() {
+        return this.sender;
     }
 
-    public int getReceiverId() {
-        return this.receiverId;
+    public User getReceiverId() {
+        return this.receiver;
     }
 
     public String getMessage() {

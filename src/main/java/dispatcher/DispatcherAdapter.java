@@ -94,7 +94,7 @@ public class DispatcherAdapter extends Observable {
         }
 
         else {
-            Message message = new Message(fromUserId, toUserId, raw);
+            Message message = new Message(sender, receiver, raw);
             room.storeMessage(sender, receiver, message);
         }
     }
