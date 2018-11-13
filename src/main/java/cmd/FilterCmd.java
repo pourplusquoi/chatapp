@@ -25,7 +25,8 @@ public class FilterCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        // TODO: apply filters
-        // TODO: kick out users that are filtered out
+        // Filter out users and kick them out
+        if (!room.applyFilter(context))
+            room.removeUser(context);
     }
 }
