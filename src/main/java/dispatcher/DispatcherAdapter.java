@@ -3,6 +3,7 @@ package dispatcher;
 import cmd.AppendCmd;
 import cmd.IUserCmd;
 import obj.ChatRoom;
+import obj.Message;
 import obj.User;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public class DispatcherAdapter extends Observable {
 
     public User loadUser(int age, String[] locations, String[] schools) {
         User user = new User(this.nextUserId,
-                age, locations, schools, (ChatRoom[]) this.rooms.values().toArray());
+                age, locations, schools, this.rooms.values().toArray(new ChatRoom[0]));
         this.users.put(this.nextRoomId, user);
         this.nextUserId++;
 
@@ -74,7 +75,48 @@ public class DispatcherAdapter extends Observable {
             this.rooms.remove(roomId);
     }
 
-    public List<String> getChatHistory(int roomId, int userIdA, int userIdB) {
+    /**
+     * A sender sends a string message to a receiver
+     * @param roomId the if of the chat room
+     * @param fromUserId the id of the sender
+     * @param toUserId the id of the receiver
+     * @param raw string message that sender sends to receiver
+     */
+    public void sendMessage(int roomId, int fromUserId, int toUserId, String raw) {
+        ChatRoom room = this.rooms.get(roomId);
+        User sender = this.users.get(fromUserId);
+        User receiver = this.users.get(toUserId);
+
+        // When user sends "hate", kick him/her out of all rooms
+        if (raw.contains("hate")) {
+            for (ChatRoom joinedRoom : sender.getJoined())
+                joinedRoom.removeUser(sender, "Forced to leave due to illegal speech.");
+        }
+
+        else {
+            Message message = new Message(fromUserId, toUserId, raw);
+            room.storeMessage(sender, receiver, message);
+        }
+    }
+
+    /**
+     * Get notifications in the chat room
+     * @param roomId the if of the chat room
+     * @return notifications of the chat room
+     */
+    public String[] getNotifications(int roomId) {
+        ChatRoom room = this.rooms.get(roomId);
+        return room.getNotifications().toArray(new String[0]);
+    }
+
+    /**
+     * Get chat history between user A and user B (commutative)
+     * @param roomId the id of chat room
+     * @param userIdA the id of user A
+     * @param userIdB the id of user B
+     * @return chat history between user A and user B
+     */
+    public Message[] getChatHistory(int roomId, int userIdA, int userIdB) {
         // Ensure userIdA < userIdB
         if (userIdA > userIdB) {
             int temp = userIdB;
@@ -83,6 +125,6 @@ public class DispatcherAdapter extends Observable {
         }
 
         // TODO: get chat history that stored in chat room
-        return new LinkedList<>();
+        return null;
     }
 }

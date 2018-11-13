@@ -19,8 +19,8 @@ public class ChatRoom extends Observable {
     // notifications contain why the user left, etc.
     private List<String> notifications;
 
-    // Maps key("smallerID+largerID") to list of chat history strings
-    private Map<String, List<String>> chatHistory;
+    // Maps key("smallId&largeId") to list of chat history strings
+    private Map<String, List<Message>> chatHistory;
 
     /**
      * Constructor
@@ -45,6 +45,10 @@ public class ChatRoom extends Observable {
 
     public User getOwner() {
         return this.owner;
+    }
+
+    public List<String> getNotifications() {
+        return this.notifications;
     }
 
     public void modifyFilter(int lower, int upper, String[] locations, String[] schools) {
@@ -77,12 +81,38 @@ public class ChatRoom extends Observable {
         this.addObserver(user);
     }
 
-    public void removeUser(User user) {
+    public void removeUser(User user, String reason) {
         IUserCmd cmd = EvictCmd.makeEvictCmd(this, user);
         this.setChanged();
         this.notifyObservers(cmd);
+
         if (user == this.owner)
             this.deleteObservers();
         else this.deleteObserver(user);
+
+        String note = "User " + Integer.toString(user.getId()) + " left: " + reason;
+        this.notifications.add(note);
+        this.freeCharHistory(user);
+    }
+
+    public void storeMessage(User sender, User receiver, Message message) {
+        int userIdA = sender.getId();
+        int userIdB = receiver.getId();
+
+        // Ensure userIdA < userIdB
+        if (userIdA > userIdB) {
+            int temp = userIdB;
+            userIdB = userIdA;
+            userIdA = temp;
+        }
+
+        String key = Integer.toString(userIdA) + "&" + Integer.toString(userIdB);
+        List<Message> history = this.chatHistory.get(key);
+        history.add(message);
+        this.chatHistory.put(key, history);
+    }
+
+    private void freeCharHistory(User user) {
+        // TODO: parse the key and remove chat history related to user
     }
 }

@@ -27,6 +27,6 @@ public class FilterCmd implements IUserCmd {
     public void execute(User context) {
         // Filter out users and kick them out
         if (!room.applyFilter(context))
-            room.removeUser(context);
+            room.removeUser(context, "Forced to leave due to chat room filters.");
     }
 }

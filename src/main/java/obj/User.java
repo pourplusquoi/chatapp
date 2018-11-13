@@ -72,7 +72,7 @@ public class User implements Observer {
 
     public boolean leaveRoom(ChatRoom room) {
         if (this.joined.contains(room)) {
-            room.removeUser(this);
+            room.removeUser(this, "Volunteered to leave.");
             return true;
         }
         else return false;
