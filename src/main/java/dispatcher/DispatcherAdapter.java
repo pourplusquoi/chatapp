@@ -65,6 +65,11 @@ public class DispatcherAdapter extends Observable {
         // TODO: make user leave room
     }
 
+    public void modifyRoomFilter(int roomId, int ownerId,
+                                 int lower, int upper, String[] locations, String[] schools) {
+        // TODO: modify the room filter
+    }
+
     public void freeEmptyRooms() {
         List<Integer> empty = new LinkedList<>();
         for (Integer roomId : this.rooms.keySet()) {

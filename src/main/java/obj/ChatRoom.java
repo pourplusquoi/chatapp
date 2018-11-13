@@ -92,7 +92,7 @@ public class ChatRoom extends Observable {
 
         String note = "User " + Integer.toString(user.getId()) + " left: " + reason;
         this.notifications.add(note);
-        this.freeCharHistory(user);
+        this.freeChatHistory(user);
     }
 
     public void storeMessage(User sender, User receiver, Message message) {
@@ -112,7 +112,7 @@ public class ChatRoom extends Observable {
         this.chatHistory.put(key, history);
     }
 
-    private void freeCharHistory(User user) {
+    private void freeChatHistory(User user) {
         // TODO: parse the key and remove chat history related to user
     }
 }
