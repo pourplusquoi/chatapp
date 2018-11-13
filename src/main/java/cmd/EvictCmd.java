@@ -31,8 +31,7 @@ public class EvictCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        // When victim is the owner, evict all users;
-        // When victim is not the owner, only evict the victim
+        // When victim is owner, evict all users; otherwise, only evict victim
         if (this.victim == this.room.getOwner() || this.victim == context) {
             context.unjoinRoom(this.room, this.victim);
         }
