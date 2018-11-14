@@ -5,7 +5,7 @@
             body {
                 background-color: #E5E5E5;
             }
-            
+
             #login-space {
                 width: 30%;
                 height: 70%;
@@ -15,7 +15,7 @@
                 box-shadow: gray 1px 1px 10px 1px;
                 overflow: hidden;
             }
-            
+
             .login-form {
                 width: 50%;
                 height: auto;
@@ -23,26 +23,26 @@
                 padding-top: 15%;
                 font-size: 1.5em;
             }
-            
+
             #username-input {
                 height: 5%;
                 width: 100%;
                 font-size: 1.5em;
             }
-            
+
             .select {
                 height: 5%;
                 width: 100%;
                 font-size: 1em;
             }
-            
+
             #login-btn {
                 width: 100%;
                 height: 5%;
                 align-content: center;
                 font-size: 1em;
             }
-            
+
         </style>
     </head>
     <body>
@@ -54,13 +54,18 @@
                 </div>
 
                 <div class="login-form">
+                    <span>AGE:</span><br/>
+                    <input id="age-input">
+                </div>
+
+                <div class="login-form">
                     <span>LOCATION:</span><br/>
                     <select class="select">
                         <option>North America</option>
                         <option>Asia</option>
                     </select>
                 </div>
-            
+
                 <div class="login-form">
                     <span>SCHOOL:</span><br/>
                     <select class="select">
@@ -68,7 +73,7 @@
                         <option>OTHER UNIVERISTY</option>
                     </select>
                 </div>
-                
+
                 <div class="login-form">
                     <input id="login-btn" type="submit" value="LOGIN">
                 </div>
