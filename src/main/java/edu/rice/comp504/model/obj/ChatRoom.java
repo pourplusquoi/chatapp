@@ -1,16 +1,17 @@
 package edu.rice.comp504.model.obj;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.Gson;
+
+import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.DispatcherAdapter;
-import edu.rice.comp504.model.cmd.FilterCmd;
-import edu.rice.comp504.model.cmd.IUserCmd;
-import edu.rice.comp504.model.cmd.EvictUserCmd;
-import edu.rice.comp504.model.cmd.UserJoinRoomCmd;
 
 public class ChatRoom extends Observable {
 
     private int id;
+
     private String name;
     private User owner;
 
@@ -24,14 +25,17 @@ public class ChatRoom extends Observable {
     // notifications contain why the user left, etc.
     private List<String> notifications;
 
-    // Maps key("smallerID+largerID") to list of chat history strings
-    private Map<String, List<String>> chatHistory;
+    // Maps key("smallId&largeId") to list of chat history strings
+    private Map<String, List<Message>> chatHistory;
 
     /**
      * Constructor
      */
-    public ChatRoom(int id, String name, User owner, int lower, int upper, String[] locations, String[] schools, DispatcherAdapter dis) {
+    public ChatRoom(int id, String name, User owner,
+                    int lower, int upper, String[] locations, String[] schools,
+                    DispatcherAdapter dispatcher) {
         this.id = id;
+
         this.name = name;
         this.owner = owner;
 
@@ -40,13 +44,10 @@ public class ChatRoom extends Observable {
         this.locations = locations;
         this.schools = schools;
 
-        this.dis = dis;
+        this.dis = dispatcher;
 
         this.notifications = new LinkedList<>();
-        this.chatHistory = new HashMap<>();
-
-        //remember to add owner to the chatroom's observer
-        this.addObserver(owner);
+        this.chatHistory = new ConcurrentHashMap<>();
     }
 
     public int getId() {
@@ -61,51 +62,116 @@ public class ChatRoom extends Observable {
         return this.owner;
     }
 
+    public List<String> getNotifications() {
+        return this.notifications;
+    }
+
+    public List<String> getUserNames() {
+        List<String> names = new ArrayList<>();
+        IUserCmd cmd = CollectNamesCmd.makeCollectNamesCmd(names);
+        this.setChanged();
+        this.notifyObservers(cmd);
+
+        // Sort the names to make them in ascending order
+        Collections.sort(names);
+        return names;
+    }
+
     public void modifyFilter(int lower, int upper, String[] locations, String[] schools) {
         this.ageLowerBound = lower;
         this.ageUpperBound = upper;
         this.locations = locations;
         this.schools = schools;
 
-        IUserCmd cmd = FilterCmd.makeFilterCmd(this);
+        // Enforce the filter on all users in chat room
+        IUserCmd cmd = EnforceFilterCmd.makeFilterCmd(this);
         this.setChanged();
         this.notifyObservers(cmd);
     }
 
     public boolean applyFilter(User user) {
         int age = user.getAge();
-//        System.out.println("age is "+ age);
         if (age < this.ageLowerBound || age > this.ageUpperBound)
             return false;
 
-        List<String> validLocations = Arrays.asList(this.locations);
-//        System.out.println("if validlocation contains " + validLocations.contains(user.getLocation()));
-        validLocations.retainAll(Arrays.asList(user.getLocation()));
-        if (validLocations.isEmpty())
+        Set<String> validLocations = new HashSet<>(Arrays.asList(this.locations));
+        Set<String> actualLocations = new HashSet<>(Arrays.asList(user.getLocations()));
+
+        if (Collections.disjoint(validLocations, actualLocations))
             return false;
 
-        List<String> validSchools = Arrays.asList(this.schools);
-        validSchools.retainAll(Arrays.asList(user.getSchool()));
-        return !validSchools.isEmpty();
+        Set<String> validSchools = new HashSet<>(Arrays.asList(this.schools));
+        Set<String> actualSchools = new HashSet<>(Arrays.asList(user.getSchools()));
+        return !Collections.disjoint(validSchools, actualSchools);
     }
 
     public void addUser(User user) {
-        IUserCmd cmd = UserJoinRoomCmd.makeUserJoinRoomCmd(this, user, dis);
         this.addObserver(user);
-        this.setChanged();
-        this.notifyObservers(cmd);
+
+        String note = "User " + user.getName() + " joined.";
+        this.notifications.add(note);
+        this.refreshRoom();
     }
 
-    public void removeUser(User user) {
+    public void removeUser(User user, String reason) {
         IUserCmd cmd = EvictUserCmd.makeEvictCmd(this, user);
         this.setChanged();
         this.notifyObservers(cmd);
+
         if (user == this.owner)
             this.deleteObservers();
         else this.deleteObserver(user);
+
+        String note = "User " + user.getName() + " left: " + reason;
+        this.notifications.add(note);
+        this.refreshRoom();
+
+        this.freeChatHistory(user);
     }
 
-    public void sendMsg(User target, String msg){
-        dis.notifyClient(target, msg);
+    public void storeMessage(User sender, User receiver, Message message) {
+        int userIdA = sender.getId();
+        int userIdB = receiver.getId();
+
+        // Ensure userIdA < userIdB
+        if (userIdA > userIdB) {
+            int temp = userIdB;
+            userIdB = userIdA;
+            userIdA = temp;
+        }
+
+        String key = Integer.toString(userIdA) + "&" + Integer.toString(userIdB);
+        if (!this.chatHistory.containsKey(key))
+            this.chatHistory.put(key, new LinkedList<>());
+        List<Message> history = this.chatHistory.get(key);
+        history.add(message);
+        this.chatHistory.put(key, history);
+    }
+
+    private void freeChatHistory(User user) {
+        // TODO: parse the key and remove chat history related to user
+    }
+
+    /**
+     * Refresh the chat room to update notification and user list
+     */
+    private void refreshRoom() {
+        Gson gson = new Gson();
+        Map<String, String> info = new HashMap<>();
+        IUserCmd cmd;
+
+        // Refresh notification at chat room
+        info.put("action", "refresh notification");
+        info.put("content", gson.toJson(this.notifications));
+        cmd = RefreshRoomCmd.makeRefreshRoomCmd(info, this.dis);
+        this.setChanged();
+        this.notifyObservers(cmd);
+
+        // Refresh name of users at chat room
+        info.put("action", "refresh user names");
+        info.put("content", gson.toJson(this.getUserNames()));
+        cmd = RefreshRoomCmd.makeRefreshRoomCmd(info, this.dis);
+        this.setChanged();
+        this.notifyObservers(cmd);
     }
 }

@@ -1,10 +1,12 @@
 package edu.rice.comp504.controller;
 
+import java.io.IOException;
+import java.util.Map;
+
 import com.google.gson.JsonObject;
-import edu.rice.comp504.model.DispatcherAdapter;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.io.IOException;
+import edu.rice.comp504.model.DispatcherAdapter;
 
 import static spark.Spark.*;
 
@@ -13,9 +15,14 @@ import static spark.Spark.*;
  */
 public class ChatAppController {
 
-    private static DispatcherAdapter dis = new DispatcherAdapter();
-    public static DispatcherAdapter getDis() {
-        return dis;
+    private static DispatcherAdapter dispatcher = new DispatcherAdapter();
+
+    /**
+     * Get the chat app dispatcher
+     * @return the dispatcher of chat app
+     */
+    public static DispatcherAdapter getDispatcher() {
+        return dispatcher;
     }
 
     /**
@@ -30,36 +37,22 @@ public class ChatAppController {
         init();
     }
 
-//    /**
-//     * Broadcast message to all users.
-//     * @param sender  The message sender.
-//     * @param message The message.
-//     */
-//     static void broadcastMessage(String sender, String message) {
-//        userNameMap.keySet().forEach(session -> {
-//            try {
-//                JsonObject jo = new JsonObject();
-//                // TODO add a JSON object property that has a key (userMessage) and a j2html paragraph value
-//                jo.addProperty("userMessage", sender + " said: " + message);
-//                session.getRemote().sendString(String.valueOf(jo));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//        });
-//    }
-
-    public static void notify(Session user, String message){
+    /**
+     Notify session about the message
+     * @param user the session to notify
+     * @param info the notification information
+     */
+    public static void notify(Session user, Map<String, String> info) {
         try {
             JsonObject jo = new JsonObject();
-            jo.addProperty("type","login");
-            jo.addProperty("message", message);
+            // jo.addProperty("type", "login");
+            for (String key : info.keySet())
+                jo.addProperty(key, info.get(key));
             user.getRemote().sendString(String.valueOf(jo));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Get the heroku assigned port number.
@@ -72,5 +65,4 @@ public class ChatAppController {
         }
         return 4567; // return default port if heroku-port isn't set.
     }
-
 }

@@ -1,52 +1,45 @@
 package edu.rice.comp504.model.obj;
 
-import edu.rice.comp504.model.DispatcherAdapter;
-import edu.rice.comp504.model.cmd.IUserCmd;
-
 import java.util.*;
+import org.eclipse.jetty.websocket.api.Session;
+import edu.rice.comp504.model.cmd.IUserCmd;
 
 public class User implements Observer {
 
     private int id;
+    private transient Session session;
 
     private String name;
-
     private int age;
-    private String location;
-    private String school;
+    private String[] locations;
+    private String[] schools;
 
-    private List<ChatRoom> joined;
-    private List<ChatRoom> available;
+    private transient List<ChatRoom> joined;
+    private transient List<ChatRoom> available;
 
     /**
      * Constructor
      */
-    public User(int id, String name, int age, String location, String school, ChatRoom[] rooms) {
+    public User(int id, Session session, String name, int age,
+                String[] locations, String[] schools, ChatRoom[] rooms) {
         this.id = id;
-        this.name = name;
+        this.session = session;
 
+        this.name = name;
         this.age = age;
-        this.location = location;
-        this.school = school;
+        this.locations = locations;
+        this.schools = schools;
 
         this.joined = new LinkedList<>();
         this.available = new LinkedList<>(Arrays.asList(rooms));
     }
 
-    public User(int id, String name, int age, String location, String school) {
-        this.id = id;
-        this.name = name;
-
-        this.age = age;
-        this.location = location;
-        this.school = school;
-
-        this.joined = new LinkedList<>();
-        this.available = new LinkedList<>();
-    }
-
     public int getId() {
         return this.id;
+    }
+
+    public Session getSession() {
+        return this.session;
     }
 
     public String getName() {
@@ -57,12 +50,12 @@ public class User implements Observer {
         return this.age;
     }
 
-    public String getLocation() {
-        return this.location;
+    public String[] getLocations() {
+        return this.locations;
     }
 
-    public String getSchool() {
-        return this.school;
+    public String[] getSchools() {
+        return this.schools;
     }
 
     public List<ChatRoom> getJoined() {
@@ -77,22 +70,8 @@ public class User implements Observer {
         this.available.add(room);
     }
 
-    public ChatRoom createRoom(int roomId, String name, int lower, int upper, String[] locations, String[] schools, DispatcherAdapter dis) {
-        ChatRoom room = new ChatRoom(roomId, name,this, lower, upper, locations, schools, dis);
-        this.joined.add(room);
-        return room;
-    }
-
     public boolean joinRoom(ChatRoom room) {
-//        System.out.println("available rooms " + this.available.toArray().toString());
-//        System.out.println("before");
-//        for (int i=0; i < available.size(); i++){
-//            System.out.println(available.get(i).getName());
-//        }
-//        System.out.println("after");
-//        System.out.println("apply room rule " + room.applyFilter(this));
         if (this.available.contains(room) && room.applyFilter(this)) {
-//            System.out.println("Inside room rule");
             room.addUser(this);
             this.joined.add(room);
             this.available.remove(room);
@@ -103,14 +82,10 @@ public class User implements Observer {
 
     public boolean leaveRoom(ChatRoom room) {
         if (this.joined.contains(room)) {
-            room.removeUser(this);
+            room.removeUser(this, "Volunteered to leave.");
             return true;
         }
         else return false;
-    }
-
-    public void sendMsg(ChatRoom room, User target, String msg){
-        room.sendMsg(target, msg + " sent by " + this.getName() + " in room " + room.getName());
     }
 
     /**
@@ -127,6 +102,5 @@ public class User implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         ((IUserCmd)arg).execute(this);
-        // TODO
     }
 }

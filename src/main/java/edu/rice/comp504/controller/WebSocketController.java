@@ -1,13 +1,11 @@
 package edu.rice.comp504.controller;
 
 import edu.rice.comp504.model.DispatcherAdapter;
-import edu.rice.comp504.model.cmd.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-
 
 /**
  * Create a web socket for the server
@@ -21,10 +19,8 @@ public class WebSocketController {
      */
     @OnWebSocketConnect
     public void onConnect(Session user) {
-        DispatcherAdapter dis = ChatAppController.getDis();
-        String username = "User" + dis.getNextUserId();
-        dis.setNextUserId(dis.getNextUserId()+1);
-        dis.getUserNameMap().put(user, username);
+        DispatcherAdapter dis = ChatAppController.getDispatcher();
+        dis.newSession(user);
     }
 
     /**
@@ -33,9 +29,9 @@ public class WebSocketController {
      */
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-        DispatcherAdapter dis = ChatAppController.getDis();
-        String username = dis.getUserNameMap().get(user);
-        dis.getUserNameMap().remove(user);
+        DispatcherAdapter dis = ChatAppController.getDispatcher();
+        int userId = dis.getUserIdFromSession(user);
+        dis.unloadUser(userId);
     }
 
     /**
@@ -45,37 +41,32 @@ public class WebSocketController {
      */
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        DispatcherAdapter dis = ChatAppController.getDis();
+        DispatcherAdapter dis = ChatAppController.getDispatcher();
 
-        //assume message will be like cmd type + real message
-        String[] tokens = message.split(" ",2);
+        // Assume message will be like "edu.rice.comp504.model.edu.rice.comp504.model.cmd msg"
+        String[] tokens = message.split(" ", 2);
         String cmd = tokens[0];
-//        System.out.println(cmd);
-        String body = tokens[1];//message.split(" ",1)[1];
-//        System.out.println(body);
-        switch(cmd){
+        String body = tokens[1];
+
+        switch (cmd) {
             case "login":
                 dis.loadUser(user, body);
                 break;
-            case "createroom":
+            case "create":
                 dis.loadRoom(user, body);
                 break;
-            case "joinroom":
+            case "join":
                 dis.joinRoom(user, body);
                 break;
-//            case "exitroom":
-//                //exit room freedom/#all
-//                dis.exitRoom(user, body);
-//                break;
-            case "chat":
-                //message chat freedom[chatroom id] #All/username Say hi[chat message]
-                dis.chat(user, body);
+            case "leave":
+                dis.leaveRoom(user, body);
+                break;
+            case "send":
+                // e.g. chat freedom[chatroom id] #All/username Say hi[chat message]
+                dis.sendMessage(user, body);
+                break;
+            default:
                 break;
         }
-
-//        ChatAppController.update(icmd);
-
-//        ChatAppController.broadcastMessage(ChatAppController.userNameMap.get(user), message);
-        // TODO broadcast the message to all clients
     }
 }

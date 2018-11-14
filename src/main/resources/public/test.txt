@@ -1,8 +1,0 @@
-user0
-login jialei 26 USA Rice
-createroom freedom test     [test is actually a string represent room rule]
-
-
-user1
-login loy 26 USA Rice
-chatroom join freedom
