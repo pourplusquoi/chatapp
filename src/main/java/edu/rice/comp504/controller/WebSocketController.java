@@ -55,6 +55,8 @@ public class WebSocketController {
             case "create":
                 dis.loadRoom(user, body);
                 break;
+            case "modify":
+                dis.modifyRoom(user, body);
             case "join":
                 dis.joinRoom(user, body);
                 break;

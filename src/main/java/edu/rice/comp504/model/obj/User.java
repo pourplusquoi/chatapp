@@ -13,8 +13,8 @@ public class User implements Observer {
 
     private String name;
     private int age;
-    private String[] locations;
-    private String[] schools;
+    private String location;
+    private String school;
 
     private transient List<ChatRoom> joined;
     private transient List<ChatRoom> available;
@@ -23,14 +23,14 @@ public class User implements Observer {
      * Constructor.
      */
     public User(int id, Session session, String name, int age,
-                String[] locations, String[] schools, ChatRoom[] rooms) {
+                String location, String school, ChatRoom[] rooms) {
         this.id = id;
         this.session = session;
 
         this.name = name;
         this.age = age;
-        this.locations = locations;
-        this.schools = schools;
+        this.location = location;
+        this.school = school;
 
         this.joined = new LinkedList<>();
         this.available = new LinkedList<>(Arrays.asList(rooms));
@@ -52,12 +52,12 @@ public class User implements Observer {
         return this.age;
     }
 
-    public String[] getLocations() {
-        return this.locations;
+    public String getLocation() {
+        return this.location;
     }
 
-    public String[] getSchools() {
-        return this.schools;
+    public String getSchool() {
+        return this.school;
     }
 
     public List<ChatRoom> getJoined() {
@@ -93,20 +93,12 @@ public class User implements Observer {
         }
     }
 
-//    public boolean leaveRoom(ChatRoom room) {
-//        if (this.joined.contains(room)) {
-//            room.removeUser(this, "Volunteered to leave.");
-//            return true;
-//        }
-//        else return false;
-//    }
-
     /**
      * Modify available chat room list, to be called by evict command.
      * @param room the room where some user leave
      * @param victim the user that leaves
      */
-    public void unjoinRoom(ChatRoom room, User victim) {
+    public void leaveRoom(ChatRoom room, User victim) {
         if (this.joined.contains(room)) {
             room.removeUser(this,"Volunteered to leave");
             this.joined.remove(room);
@@ -125,7 +117,7 @@ public class User implements Observer {
     private void refresh(ChatRoom room) {
         Gson gson = new Gson();
         Map<String, String> info = new HashMap<>();
-        info.put("type", "roomList");
+        info.put("type", "userRooms");
         info.put("userId", Integer.toString(this.id));
 
         int[] joinedIds = new int[this.joined.size()];

@@ -57,39 +57,28 @@ public class DispatcherAdapter extends Observable {
     /**
      * Load a user into the environment.
      * @param session session
-     * @param body of format "name + age + (location:USA)* + (school:Rice)*"
+     * @param body of format "name + age + location + school"
      * @return the user loaded
      */
     public User loadUser(Session session, String body) {
         String[] tokens = body.split(" ");
         String name = tokens[0];
         int age = Integer.parseInt(tokens[1]);
-
-        List<String> locationList = new LinkedList<>();
-        List<String> schoolList = new LinkedList<>();
-        for (int i = 2; i < tokens.length; i++) {
-            String str = tokens[i].substring(tokens[i].indexOf(':') + 1);
-            if (tokens[i].charAt(0) == 'l') {
-                locationList.add(str);
-            } else {
-                schoolList.add(str);
-            }
-        }
-        String[] locations = locationList.toArray(new String[0]);
-        String[] schools = schoolList.toArray(new String[0]);
+        String location = tokens[2];
+        String school = tokens[3];
 
         int userId = this.userIdFromSession.get(session);
-        ChatRoom[] allRooms = this.rooms.values().toArray(new ChatRoom[0]);
 
-        User user = new User(userId, session, name, age, locations, schools, allRooms);
-        this.users.put(userId, user);
-
-        // Put a message for login
+        // Refresh for a new login user
         Map<String, String> info = new HashMap<>();
         info.put("type", "newUser");
-        info.put("userId", Integer.toString(user.getId()));
-        info.put("userName", user.getName());
+        info.put("userId", Integer.toString(userId));
+        info.put("userName", name);
         ChatAppController.notify(session, info);
+
+        ChatRoom[] allRooms = this.rooms.values().toArray(new ChatRoom[0]);
+        User user = new User(userId, session, name, age, location, school, allRooms);
+        this.users.put(userId, user);
 
         this.addObserver(user);
         return user;
@@ -98,7 +87,7 @@ public class DispatcherAdapter extends Observable {
     /**
      * Load a room into the environment.
      * @param session session
-     * @param body of format "ownerId + name + ageLower + ageUpper + (location:USA)* + (school:Rice)*"
+     * @param body of format "name + ageLower + ageUpper + {[location],}*{[location]} + {[school],}*{[school]}"
      * @return return
      */
     public ChatRoom loadRoom(Session session, String body) {
@@ -107,18 +96,8 @@ public class DispatcherAdapter extends Observable {
         int lower = Integer.parseInt(tokens[1]);
         int upper = Integer.parseInt(tokens[2]);
 
-        List<String> locationList = new LinkedList<>();
-        List<String> schoolList = new LinkedList<>();
-        for (int i = 3; i < tokens.length; i++) {
-            String str = tokens[i].substring(tokens[i].indexOf(':') + 1);
-            if (tokens[i].charAt(0) == 'l') {
-                locationList.add(str);
-            } else {
-                schoolList.add(str);
-            }
-        }
-        String[] locations = locationList.toArray(new String[0]);
-        String[] schools = schoolList.toArray(new String[0]);
+        String[] locations = tokens[3].split(",");
+        String[] schools = tokens[4].split(",");
 
         int ownerId = this.userIdFromSession.get(session);
         User owner = this.users.get(ownerId);
@@ -134,7 +113,7 @@ public class DispatcherAdapter extends Observable {
         info.put("type", "newRoom");
         info.put("roomId", Integer.toString(room.getId()));
         info.put("roomName", room.getName());
-        info.put("roomOwnerId", Integer.toString(room.getOwner().getId()));
+        info.put("ownerId", Integer.toString(room.getOwner().getId()));
         ChatAppController.notify(session, info);
 
         // Add the room to users' available list
@@ -179,19 +158,27 @@ public class DispatcherAdapter extends Observable {
     public void leaveRoom(Session session, String body) {
         int roomId = Integer.parseInt(body);
         int userId = this.userIdFromSession.get(session);
+
         // TODO: make user leave room
     }
 
     /**
      * Make modification on chat room filer by the owner.
      * @param session session
-     * @param body body
+     * @param body of format "roomId + lower + upper + {[location],}*{[location]} + {[school],}*{[school]}"
      */
-    public void modifyRoomFilter(Session session, String body) {
-        // TODO: parse body and modify the room filter
+    public void modifyRoom(Session session, String body) {
+        String [] tokens = body.split(" ");
+        int roomId = Integer.parseInt(tokens[0]);
+        int lower = Integer.parseInt(tokens[1]);
+        int upper = Integer.parseInt(tokens[2]);
+
+        String[] locations = tokens[3].split(",");
+        String[] schools = tokens[4].split(",");
+
+        ChatRoom room = this.rooms.get(roomId);
+        room.modifyFilter(lower, upper, locations, schools);
     }
-    // public void modifyRoomFilter(Session session, int roomId, int ownerId,
-    //                              int lower, int upper, String[] locations, String[] schools) {}
 
     /**
      * Recycle rooms with no users.
@@ -247,8 +234,8 @@ public class DispatcherAdapter extends Observable {
             // Notify the client
             Gson gson = new Gson();
             Map<String, String> info = new ConcurrentHashMap<>();
-            info.put("type", "chatHistory");
-            Message[] history = this.getChatHistory(roomId, senderId, receiverId);
+            info.put("type", "userChatHistory");
+            List<Message> history = this.getChatHistory(roomId, senderId, receiverId);
             info.put("content", gson.toJson(history));
             this.notifyClient(receiver, info);
         }
@@ -267,8 +254,8 @@ public class DispatcherAdapter extends Observable {
 
             Gson gson = new Gson();
             Map<String, String> info = new HashMap<>();
-            info.put("type", "chatHistory");
-            Message[] history = this.getChatHistory(message.getRoomId(),
+            info.put("type", "userChatHistory");
+            List<Message> history = this.getChatHistory(message.getRoomId(),
                     message.getSenderId(), message.getReceiverId());
             info.put("content", gson.toJson(history));
 
@@ -303,24 +290,24 @@ public class DispatcherAdapter extends Observable {
 
         Gson gson = new Gson();
         int roomId;
-        int senderId;
-        int receiverId;
+        int userAId;
+        int userBId;
         switch (type) {
-            case "users":
+            case "roomUsers":
                 roomId = Integer.parseInt(tokens[1]);
                 info.put("roomId", Integer.toString(roomId));
                 info.put("content", gson.toJson(this.getUsers(roomId)));
                 break;
-            case "notifications":
+            case "roomNotifications":
                 roomId = Integer.parseInt(tokens[1]);
                 info.put("roomId", Integer.toString(roomId));
                 info.put("content", gson.toJson(this.getNotifications(roomId)));
                 break;
-            case "chatHistory":
+            case "userChatHistory":
                 roomId = Integer.parseInt(tokens[1]);
-                senderId = Integer.parseInt(tokens[2]);
-                receiverId = Integer.parseInt(tokens[3]);
-                info.put("content", gson.toJson(this.getChatHistory(roomId, senderId, receiverId)));
+                userAId = this.userIdFromSession.get(session);
+                userBId = Integer.parseInt(tokens[2]);
+                info.put("content", gson.toJson(this.getChatHistory(roomId, userAId, userBId)));
                 break;
             default: break;
         }
@@ -343,9 +330,9 @@ public class DispatcherAdapter extends Observable {
      * @param roomId the id of the room
      * @return notifications of the chat room
      */
-    private String[] getNotifications(int roomId) {
+    private List<String> getNotifications(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
-        return room.getNotifications().toArray(new String[0]);
+        return room.getNotifications();
     }
 
     /**
@@ -355,7 +342,7 @@ public class DispatcherAdapter extends Observable {
      * @param userBId the id of user B
      * @return chat history between user A and user B
      */
-    private Message[] getChatHistory(int roomId, int userAId, int userBId) {
+    private List<Message> getChatHistory(int roomId, int userAId, int userBId) {
         // Ensure userIdA < userIdB
         if (userAId > userBId) {
             int temp = userBId;

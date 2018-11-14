@@ -104,17 +104,8 @@ public class ChatRoom extends Observable {
         if (age < this.ageLowerBound || age > this.ageUpperBound) {
             return false;
         }
-
-        Set<String> validLocations = new HashSet<>(Arrays.asList(this.locations));
-        Set<String> actualLocations = new HashSet<>(Arrays.asList(user.getLocations()));
-
-        if (Collections.disjoint(validLocations, actualLocations)) {
-            return false;
-        }
-
-        Set<String> validSchools = new HashSet<>(Arrays.asList(this.schools));
-        Set<String> actualSchools = new HashSet<>(Arrays.asList(user.getSchools()));
-        return !Collections.disjoint(validSchools, actualSchools);
+        return Arrays.asList(this.locations).contains(user.getLocation())
+                && Arrays.asList(this.schools).contains(user.getSchool());
     }
 
     /**
@@ -132,10 +123,6 @@ public class ChatRoom extends Observable {
      * function.
      */
     public void removeUser(User user, String reason) {
-//        IUserCmd cmd = EvictUserCmd.makeEvictCmd(this, user);
-//        this.setChanged();
-//        this.notifyObservers(cmd);
-
         if (user == this.owner) {
             this.deleteObservers();
         } else {
@@ -188,7 +175,7 @@ public class ChatRoom extends Observable {
         IUserCmd cmd;
 
         // Refresh notification at chat room
-        info.put("type", "notifications");
+        info.put("type", "roomNotifications");
         info.put("roomId", Integer.toString(this.id));
         info.put("content", gson.toJson(this.notifications));
         cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
@@ -196,7 +183,7 @@ public class ChatRoom extends Observable {
         this.notifyObservers(cmd);
 
         // Refresh name of users at chat room
-        info.put("type", "users");
+        info.put("type", "roomUsers");
         info.put("roomId", Integer.toString(this.id));
         info.put("content", gson.toJson(this.getUsers()));
         cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
