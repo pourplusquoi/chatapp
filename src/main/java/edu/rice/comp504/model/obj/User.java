@@ -68,24 +68,38 @@ public class User implements Observer {
         return this.available;
     }
 
-    public void addAvailable(ChatRoom room) {
+    public void addRoom(ChatRoom room) {
         this.available.add(room);
         this.refresh(room);
     }
 
-    public void removeAvailable(ChatRoom room) {
+    public void removeRoom(ChatRoom room) {
+        this.joined.remove(room);
         this.available.remove(room);
         this.refresh(room);
     }
 
+    public void moveToJoined(ChatRoom room) {
+        this.joined.add(room);
+        this.available.remove(room);
+        this.refresh(room);
+    }
+
+    public void moveToAvailable(ChatRoom room) {
+        this.available.add(room);
+        this.joined.remove(room);
+        this.refresh(room);
+    }
+
     /**
-     * function.
+     * Make user join the room
+     * @param room the room where some user join
+     * @return whether or not successful
      */
     public boolean joinRoom(ChatRoom room) {
         if (this.available.contains(room) && room.applyFilter(this)) {
+            this.moveToJoined(room);
             room.addUser(this);
-            this.joined.add(room);
-            this.available.remove(room);
             this.refresh(room);
             return true;
         } else {
@@ -94,18 +108,17 @@ public class User implements Observer {
     }
 
     /**
-     * Modify available chat room list, to be called by evict command.
+     * Make user volunteer to leave the room
      * @param room the room where some user leave
-     * @param victim the user that leaves
+     * @return whether or not successful
      */
-    public void leaveRoom(ChatRoom room, User victim) {
+    public boolean leaveRoom(ChatRoom room) {
         if (this.joined.contains(room)) {
-            room.removeUser(this,"Volunteered to leave");
-            this.joined.remove(room);
-            if (room.getOwner() != victim) {
-                this.available.add(room);
-            }
+            room.removeUser(this, "Volunteered to leave");
             this.refresh(room);
+            return true;
+        } else {
+            return false;
         }
     }
 

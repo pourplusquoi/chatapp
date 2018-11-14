@@ -133,7 +133,20 @@ public class DispatcherAdapter extends Observable {
     public void unloadUser(int userId) {
         User user = this.users.get(userId);
         this.userIdFromSession.remove(user.getSession());
+
         // TODO: remove user from the environment, and automatically leave all joined chat rooms
+    }
+
+    /**
+     * Remove a room with given roomId from the environment.
+     * @param roomId the id of the room to be removed
+     */
+    public void unloadRoom(int roomId) {
+        ChatRoom room = this.rooms.get(roomId);
+        IUserCmd cmd = DeleteRoomCmd.makeDeteleCmd(room);
+        this.setChanged();
+        this.notifyObservers(cmd);
+        this.rooms.remove(room.getId());
     }
 
     /**
@@ -178,25 +191,6 @@ public class DispatcherAdapter extends Observable {
 
         ChatRoom room = this.rooms.get(roomId);
         room.modifyFilter(lower, upper, locations, schools);
-    }
-
-    /**
-     * Recycle rooms with no users.
-     */
-    public void freeEmptyRooms() {
-        List<ChatRoom> empty = new LinkedList<>();
-        for (Integer roomId : this.rooms.keySet()) {
-            ChatRoom room = this.rooms.get(roomId);
-            if (room.countObservers() == 0) {
-                empty.add(room);
-            }
-        }
-        for (ChatRoom room : empty) {
-            IUserCmd cmd = DeleteRoomCmd.makeDeteleCmd(room);
-            this.setChanged();
-            this.notifyObservers(cmd);
-            this.rooms.remove(room.getId());
-        }
     }
 
     /**

@@ -30,6 +30,6 @@ public class DeleteRoomCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        context.removeAvailable(this.room);
+        context.removeRoom(this.room);
     }
 }

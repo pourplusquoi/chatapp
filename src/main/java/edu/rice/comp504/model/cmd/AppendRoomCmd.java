@@ -31,6 +31,6 @@ public class AppendRoomCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        context.addAvailable(this.room);
+        context.addRoom(this.room);
     }
 }

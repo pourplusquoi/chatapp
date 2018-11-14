@@ -104,6 +104,7 @@ public class ChatRoom extends Observable {
         if (age < this.ageLowerBound || age > this.ageUpperBound) {
             return false;
         }
+
         return Arrays.asList(this.locations).contains(user.getLocation())
                 && Arrays.asList(this.schools).contains(user.getSchool());
     }
@@ -123,10 +124,12 @@ public class ChatRoom extends Observable {
      * function.
      */
     public void removeUser(User user, String reason) {
-        if (user == this.owner) {
+        if (user == this.owner) { // When room owner leaves, unload the room
             this.deleteObservers();
-        } else {
+            this.dis.unloadRoom(this.id);
+        } else { // otherwise, remove the user from obs
             this.deleteObserver(user);
+            user.moveToAvailable(this);
         }
 
         String note = "User " + user.getName() + " left: " + reason;
