@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
 import edu.rice.comp504.model.cmd.DeleteRoomCmd;
-import edu.rice.comp504.model.cmd.RefreshCmd;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.cmd.AppendRoomCmd;

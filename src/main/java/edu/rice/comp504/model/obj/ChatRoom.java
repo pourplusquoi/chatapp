@@ -111,7 +111,7 @@ public class ChatRoom extends Observable {
 
         String note = "User " + user.getName() + " joined.";
         this.notifications.add(note);
-        this.refreshRoom();
+        this.refresh();
     }
 
     public void removeUser(User user, String reason) {
@@ -125,7 +125,7 @@ public class ChatRoom extends Observable {
 
         String note = "User " + user.getName() + " left: " + reason;
         this.notifications.add(note);
-        this.refreshRoom();
+        this.refresh();
 
         this.freeChatHistory(user);
     }
@@ -156,7 +156,7 @@ public class ChatRoom extends Observable {
     /**
      * Refresh the chat room to update notification and user list
      */
-    private void refreshRoom() {
+    private void refresh() {
         Gson gson = new Gson();
         Map<String, String> info = new HashMap<>();
         IUserCmd cmd;
@@ -165,7 +165,7 @@ public class ChatRoom extends Observable {
         info.put("type", "notifications");
         info.put("roomId", Integer.toString(this.id));
         info.put("content", gson.toJson(this.notifications));
-        cmd = RefreshCmd.makeRefreshRoomCmd(info, this.dis);
+        cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
 
@@ -173,7 +173,7 @@ public class ChatRoom extends Observable {
         info.put("type", "users");
         info.put("roomId", Integer.toString(this.id));
         info.put("content", gson.toJson(this.getUsers()));
-        cmd = RefreshCmd.makeRefreshRoomCmd(info, this.dis);
+        cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
     }
