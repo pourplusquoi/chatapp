@@ -45,7 +45,6 @@ public class ChatAppController {
     public static void notify(Session user, Map<String, String> info) {
         try {
             JsonObject jo = new JsonObject();
-            // jo.addProperty("type", "login");
             for (String key : info.keySet())
                 jo.addProperty(key, info.get(key));
             user.getRemote().sendString(String.valueOf(jo));

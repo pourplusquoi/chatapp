@@ -39,10 +39,10 @@ function sendMessage(msg) {
  */
 function updateChatRoom(message) {
     // TODO convert the data to JSON and append the message to the chat area
-    var action = JSON.parse(message).action;
-    var content = JSON.parse(message).content;
+    // var action = JSON.parse(message).action;
+    // var content = JSON.parse(message).content;
     // console.log(json);
     var div = document.getElementById('chatArea');
-    div.innerHTML += action + ": " + content + "<br>";
+    div.innerHTML += message + "<br>";
     // div.html(div.html + msg + "<br>");
 }

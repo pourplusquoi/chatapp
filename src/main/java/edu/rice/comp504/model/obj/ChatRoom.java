@@ -66,14 +66,15 @@ public class ChatRoom extends Observable {
         return this.notifications;
     }
 
-    public List<String> getUserNames() {
-        List<String> names = new ArrayList<>();
+    public DispatcherAdapter getDispatcher() {
+        return this.dis;
+    }
+
+    public Map<Integer, String> getUsers() {
+        Map<Integer, String> names = new TreeMap<>();
         IUserCmd cmd = CollectNamesCmd.makeCollectNamesCmd(names);
         this.setChanged();
         this.notifyObservers(cmd);
-
-        // Sort the names to make them in ascending order
-        Collections.sort(names);
         return names;
     }
 
@@ -161,16 +162,18 @@ public class ChatRoom extends Observable {
         IUserCmd cmd;
 
         // Refresh notification at chat room
-        info.put("action", "refresh notification");
+        info.put("type", "notifications");
+        info.put("roomId", Integer.toString(this.id));
         info.put("content", gson.toJson(this.notifications));
-        cmd = RefreshRoomCmd.makeRefreshRoomCmd(info, this.dis);
+        cmd = RefreshCmd.makeRefreshRoomCmd(info, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
 
         // Refresh name of users at chat room
-        info.put("action", "refresh user names");
-        info.put("content", gson.toJson(this.getUserNames()));
-        cmd = RefreshRoomCmd.makeRefreshRoomCmd(info, this.dis);
+        info.put("type", "users");
+        info.put("roomId", Integer.toString(this.id));
+        info.put("content", gson.toJson(this.getUsers()));
+        cmd = RefreshCmd.makeRefreshRoomCmd(info, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
     }

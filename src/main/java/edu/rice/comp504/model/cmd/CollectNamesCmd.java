@@ -2,22 +2,22 @@ package edu.rice.comp504.model.cmd;
 
 import edu.rice.comp504.model.obj.User;
 
-import java.util.List;
+import java.util.Map;
 
 public class CollectNamesCmd implements IUserCmd {
 
-    private List<String> names;
+    private Map<Integer, String> names;
 
     static private IUserCmd instance;
 
     /**
      * Constructor
      */
-    private CollectNamesCmd(List<String> names) {
+    private CollectNamesCmd(Map<Integer, String> names) {
         this.names = names;
     }
 
-    static public IUserCmd makeCollectNamesCmd(List<String> names) {
+    static public IUserCmd makeCollectNamesCmd(Map<Integer, String> names) {
         if (instance == null)
             instance = new CollectNamesCmd(names);
         else ((CollectNamesCmd) instance).names = names;
@@ -26,7 +26,6 @@ public class CollectNamesCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        String name = context.getName() + "(" + context.getId() + ")";
-        this.names.add(name);
+        this.names.put(context.getId(), context.getName());
     }
 }

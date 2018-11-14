@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
+import edu.rice.comp504.model.cmd.DeleteRoomCmd;
+import edu.rice.comp504.model.cmd.RefreshCmd;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.cmd.AppendRoomCmd;
@@ -83,8 +85,9 @@ public class DispatcherAdapter extends Observable {
 
         // Put a message for login
         Map<String, String> info = new HashMap<>();
-        info.put("action", "login");
-        info.put("content", "Hi " + user.getName() + "! You successfully logged in.");
+        info.put("type", "newUser");
+        info.put("userId", Integer.toString(user.getId()));
+        info.put("userName", user.getName());
         ChatAppController.notify(session, info);
 
         this.addObserver(user);
@@ -125,8 +128,10 @@ public class DispatcherAdapter extends Observable {
 
         // Put a message for create room
         Map<String, String> info = new HashMap<>();
-        info.put("action", "create");
-        info.put("content", "You created room " + room.getName() + ".");
+        info.put("type", "newRoom");
+        info.put("roomId", Integer.toString(room.getId()));
+        info.put("roomName", room.getName());
+        info.put("roomOwnerId", Integer.toString(room.getOwner().getId()));
         ChatAppController.notify(session, info);
 
         // Add the room to users' available list
@@ -174,19 +179,33 @@ public class DispatcherAdapter extends Observable {
         // TODO: make user leave room
     }
 
-    public void modifyRoomFilter(Session session, int roomId, int ownerId,
-                                 int lower, int upper, String[] locations, String[] schools) {
-        // TODO: modify the room filter
+    /**
+     * Make modification on chat room filer by the owner
+     * @param session
+     * @param body
+     */
+    public void modifyRoomFilter(Session session, String body) {
+        // TODO: parse body and modify the room filter
     }
+    // public void modifyRoomFilter(Session session, int roomId, int ownerId,
+    //                              int lower, int upper, String[] locations, String[] schools) {}
 
+    /**
+     * Recycle rooms with no users
+     */
     public void freeEmptyRooms() {
-        List<Integer> empty = new LinkedList<>();
+        List<ChatRoom> empty = new LinkedList<>();
         for (Integer roomId : this.rooms.keySet()) {
-            if (this.rooms.get(roomId).countObservers() == 0)
-                empty.add(roomId);
+            ChatRoom room = this.rooms.get(roomId);
+            if (room.countObservers() == 0)
+                empty.add(room);
         }
-        for (Integer roomId : empty)
-            this.rooms.remove(roomId);
+        for (ChatRoom room : empty) {
+            IUserCmd cmd = DeleteRoomCmd.makeDeteleCmd(room);
+            this.setChanged();
+            this.notifyObservers(cmd);
+            this.rooms.remove(room.getId());
+        }
     }
 
     /**
@@ -225,8 +244,9 @@ public class DispatcherAdapter extends Observable {
             // Notify the client
             Gson gson = new Gson();
             Map<String, String> info = new ConcurrentHashMap<>();
-            info.put("action", "receive message");
-            info.put("content", gson.toJson(message));
+            info.put("type", "chatHistory");
+            Message[] history = this.getChatHistory(roomId, senderId, receiverId);
+            info.put("content", gson.toJson(history));
             this.notifyClient(receiver, info);
         }
     }
@@ -244,8 +264,10 @@ public class DispatcherAdapter extends Observable {
 
             Gson gson = new Gson();
             Map<String, String> info = new HashMap<>();
-            info.put("action", "ack");
-            info.put("content", gson.toJson(message));
+            info.put("type", "chatHistory");
+            Message[] history = this.getChatHistory(message.getRoomId(),
+                    message.getSenderId(), message.getReceiverId());
+            info.put("content", gson.toJson(history));
 
             // Refresh whether or not received
             int senderId = message.getSenderId();
@@ -264,56 +286,76 @@ public class DispatcherAdapter extends Observable {
     }
 
     /**
-     * Get the name of the chat room owner
+     * Send query result from controller to front end
      * @param session
-     * @param body of format "roomId"
-     * @return name of the chat room owner
+     * @param body of format "type + roomId + [senderId] + [receiverId]"
      */
-    public String getOwnerName(Session session, String body) {
-        int roomId = Integer.valueOf(body);
-        ChatRoom room = this.rooms.get(roomId);
-        User user = room.getOwner();
-        return user.getName() + "(" + user.getId() + ")";
+    public void query(Session session, String body) {
+        String[] tokens = body.split(" ");
+        String type = tokens[0];
+
+        User receiver = this.users.get(this.userIdFromSession.get(session));
+        Map<String, String> info = new HashMap<>();
+        info.put("type", type);
+
+        Gson gson = new Gson();
+        int roomId, senderId, receiverId;
+        switch (type) {
+            case "users":
+                roomId = Integer.parseInt(tokens[1]);
+                info.put("roomId", Integer.toString(roomId));
+                info.put("content", gson.toJson(this.getUsers(roomId)));
+                break;
+            case "notifications":
+                roomId = Integer.parseInt(tokens[1]);
+                info.put("roomId", Integer.toString(roomId));
+                info.put("content", gson.toJson(this.getNotifications(roomId)));
+                break;
+            case "chatHistory":
+                roomId = Integer.parseInt(tokens[1]);
+                senderId = Integer.parseInt(tokens[2]);
+                receiverId = Integer.parseInt(tokens[3]);
+                info.put("content", gson.toJson(this.getChatHistory(roomId, senderId, receiverId)));
+                break;
+            default: break;
+        }
+
+        this.notifyClient(receiver, info);
     }
 
     /**
      * Get the names of all chat room members
-     * @param session
-     * @param body of format "roomId"
+     * @param roomId the id of the room
      * @return names of all chat room members
      */
-    public String[] getUserNameList(Session session, String body) {
-        int roomId = Integer.valueOf(body);
+    private Map<Integer, String> getUsers(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
-        List<String> nameList = room.getUserNames();
-        return nameList.toArray(new String[0]);
+        return room.getUsers();
     }
 
     /**
      * Get notifications in the chat room
-     * @param session
-     * @param body of format "roomId"
+     * @param roomId the id of the room
      * @return notifications of the chat room
      */
-    public String[] getNotifications(Session session, String body) {
-        int roomId = Integer.valueOf(body);
+    private String[] getNotifications(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
         return room.getNotifications().toArray(new String[0]);
     }
 
     /**
      * Get chat history between user A and user B (commutative)
-     * @param roomId the id of chat room
-     * @param userIdA the id of user A
-     * @param userIdB the id of user B
+     * @param roomId the id of the chat room
+     * @param userAId the id of user A
+     * @param userBId the id of user B
      * @return chat history between user A and user B
      */
-    public Message[] getChatHistory(Session session, int roomId, int userIdA, int userIdB) {
+    private Message[] getChatHistory(int roomId, int userAId, int userBId) {
         // Ensure userIdA < userIdB
-        if (userIdA > userIdB) {
-            int temp = userIdB;
-            userIdB = userIdA;
-            userIdA = temp;
+        if (userAId > userBId) {
+            int temp = userBId;
+            userBId = userAId;
+            userAId = temp;
         }
 
         // TODO: get chat history that stored in chat room

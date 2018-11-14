@@ -43,7 +43,7 @@ public class WebSocketController {
     public void onMessage(Session user, String message) {
         DispatcherAdapter dis = ChatAppController.getDispatcher();
 
-        // Assume message will be like "edu.rice.comp504.model.edu.rice.comp504.model.cmd msg"
+        // Assume message will be like "cmd + msg"
         String[] tokens = message.split(" ", 2);
         String cmd = tokens[0];
         String body = tokens[1];
@@ -62,11 +62,15 @@ public class WebSocketController {
                 dis.leaveRoom(user, body);
                 break;
             case "send":
-                // e.g. chat freedom[chatroom id] #All/username Say hi[chat message]
                 dis.sendMessage(user, body);
                 break;
-            default:
+            case "ack":
+                dis.ackMessage(user, body);
                 break;
+            case "query":
+                dis.query(user, body);
+                break;
+            default: break;
         }
     }
 }

@@ -1,6 +1,8 @@
 package edu.rice.comp504.model.obj;
 
 import java.util.*;
+
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import edu.rice.comp504.model.cmd.IUserCmd;
 
@@ -68,6 +70,12 @@ public class User implements Observer {
 
     public void addAvailable(ChatRoom room) {
         this.available.add(room);
+        this.refresh(room);
+    }
+
+    public void removeAvailable(ChatRoom room) {
+        this.available.remove(room);
+        this.refresh(room);
     }
 
     public boolean joinRoom(ChatRoom room) {
@@ -75,6 +83,7 @@ public class User implements Observer {
             room.addUser(this);
             this.joined.add(room);
             this.available.remove(room);
+            this.refresh(room);
             return true;
         }
         else return false;
@@ -97,10 +106,30 @@ public class User implements Observer {
         this.joined.remove(room);
         if (room.getOwner() != victim)
             this.available.add(room);
+        this.refresh(room);
     }
 
     @Override
     public void update(Observable o, Object arg) {
         ((IUserCmd)arg).execute(this);
+    }
+
+    private void refresh(ChatRoom room) {
+        Gson gson = new Gson();
+        Map<String, String> info = new HashMap<>();
+        info.put("type", "roomList");
+        info.put("userId", Integer.toString(this.id));
+
+        int[] joinedIds = new int[this.joined.size()];
+        for (int i = 0; i < this.joined.size(); i++)
+            joinedIds[i] = this.joined.get(i).getId();
+        info.put("joinedIds", gson.toJson(joinedIds));
+
+        int[] availableIds = new int[this.available.size()];
+        for (int i = 0; i < this.available.size(); i++)
+            availableIds[i] = this.available.get(i).getId();
+        info.put("availableIds", gson.toJson(availableIds));
+
+        room.getDispatcher().notifyClient(this, info);
     }
 }

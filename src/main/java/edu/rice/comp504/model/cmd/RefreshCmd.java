@@ -5,7 +5,7 @@ import edu.rice.comp504.model.DispatcherAdapter;
 
 import java.util.Map;
 
-public class RefreshRoomCmd implements IUserCmd {
+public class RefreshCmd implements IUserCmd {
 
     private Map<String, String> info;
     private DispatcherAdapter dis;
@@ -15,16 +15,16 @@ public class RefreshRoomCmd implements IUserCmd {
     /**
      * Constructor
      */
-    private RefreshRoomCmd(Map<String, String> info, DispatcherAdapter dis) {
+    private RefreshCmd(Map<String, String> info, DispatcherAdapter dis) {
         this.info = info;
         this.dis = dis;
     }
 
     static public IUserCmd makeRefreshRoomCmd(Map<String, String> info, DispatcherAdapter dis) {
         if (instance == null)
-            instance = new RefreshRoomCmd(info, dis);
+            instance = new RefreshCmd(info, dis);
         else {
-            RefreshRoomCmd cmd = (RefreshRoomCmd) instance;
+            RefreshCmd cmd = (RefreshCmd) instance;
             cmd.info = info;
             cmd.dis = dis;
         }
