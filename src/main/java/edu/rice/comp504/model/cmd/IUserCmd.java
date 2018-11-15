@@ -8,6 +8,7 @@ import edu.rice.comp504.model.obj.User;
 public interface IUserCmd {
     /**
      * Execute is the function such that all command will execute once the command is passed to observer's update
+     * @context a user which the command will operate on
      */
     void execute(User context);
 }
