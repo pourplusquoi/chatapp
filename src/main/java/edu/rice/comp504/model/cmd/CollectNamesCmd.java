@@ -6,31 +6,31 @@ import edu.rice.comp504.model.obj.User;
 
 public class CollectNamesCmd implements IUserCmd {
 
-    private Map<Integer, String> names;
+    private Map<Integer, User> users;
 
     private static IUserCmd instance;
 
     /**
      * Constructor.
      */
-    private CollectNamesCmd(Map<Integer, String> names) {
-        this.names = names;
+    private CollectNamesCmd(Map<Integer, User> users) {
+        this.users = users;
     }
 
     /**
      * Singleton.
      */
-    public static IUserCmd makeCollectNamesCmd(Map<Integer, String> names) {
+    public static IUserCmd makeCollectNamesCmd(Map<Integer, User> users) {
         if (instance == null) {
-            instance = new CollectNamesCmd(names);
+            instance = new CollectNamesCmd(users);
         } else {
-            ((CollectNamesCmd) instance).names = names;
+            ((CollectNamesCmd) instance).users = users;
         }
         return instance;
     }
 
     @Override
     public void execute(User context) {
-        this.names.put(context.getId(), context.getName());
+        this.users.put(context.getId(), context);
     }
 }

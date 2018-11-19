@@ -3,6 +3,7 @@ package edu.rice.comp504.model;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import edu.rice.comp504.model.cmd.JoinRoomCmd;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.cmd.AppendRoomCmd;
@@ -153,7 +154,10 @@ public class DispatcherAdapter extends Observable {
 
         User user = this.users.get(userId);
         ChatRoom room = this.rooms.get(roomId);
-        user.joinRoom(room);
+        IUserCmd cmd = JoinRoomCmd.makeJoinRoomCmd(room, user);
+
+        room.addObserver(user);
+        room.notifyUsers(cmd);
     }
 
     /**
@@ -267,7 +271,7 @@ public class DispatcherAdapter extends Observable {
         switch (type) {
             case "roomUsers":
                 roomId = Integer.parseInt(tokens[1]);
-                Map<Integer, String> users = this.getUsers(roomId);
+                Map<Integer, User> users = this.getUsers(roomId);
                 res = new RoomUsersResponse(roomId, users);
                 break;
             case "roomNotifications":
@@ -305,7 +309,7 @@ public class DispatcherAdapter extends Observable {
      * @param roomId the id of the room
      * @return names of all chat room members
      */
-    private Map<Integer, String> getUsers(int roomId) {
+    private Map<Integer, User> getUsers(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
         return room.getUsers();
     }

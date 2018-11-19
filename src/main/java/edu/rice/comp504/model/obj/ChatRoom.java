@@ -74,12 +74,12 @@ public class ChatRoom extends Observable {
     /**
      * function.
      */
-    public Map<Integer, String> getUsers() {
-        Map<Integer, String> names = new TreeMap<>();
-        IUserCmd cmd = CollectNamesCmd.makeCollectNamesCmd(names);
+    public Map<Integer, User> getUsers() {
+        Map<Integer, User> users = new TreeMap<>();
+        IUserCmd cmd = CollectNamesCmd.makeCollectNamesCmd(users);
         this.setChanged();
         this.notifyObservers(cmd);
-        return names;
+        return users;
     }
 
     /**
@@ -142,6 +142,14 @@ public class ChatRoom extends Observable {
 
     /**
      * function.
+     * @param note
+     */
+    public void storeNotification(String note) {
+        this.notifications.add(note);
+    }
+
+    /**
+     * function.
      */
     public void storeMessage(User sender, User receiver, Message message) {
         int userIdA = sender.getId();
@@ -168,6 +176,14 @@ public class ChatRoom extends Observable {
      */
     private void freeChatHistory(User user) {
         // TODO: parse the key and remove chat history related to user
+    }
+
+    /**
+     * function.
+     */
+    public void notifyUsers(IUserCmd cmd) {
+        this.setChanged();
+        this.notifyObservers(cmd);
     }
 
     /**

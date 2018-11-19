@@ -88,9 +88,12 @@ public class User implements Observer {
 
     public void moveToJoined(ChatRoom room) {
         Integer roomId = room.getId();
+        System.out.println(this.joinedRoomIds.size());
+        System.out.println(this.availableRoomIds.size());
         this.joinedRoomIds.add(roomId);
         this.availableRoomIds.remove(roomId);
-        this.refresh(room);
+        System.out.println(this.joinedRoomIds.size());
+        System.out.println(this.availableRoomIds.size());
     }
 
     public void moveToAvailable(ChatRoom room) {
