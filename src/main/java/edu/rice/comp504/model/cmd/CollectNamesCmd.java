@@ -1,8 +1,8 @@
 package edu.rice.comp504.model.cmd;
 
-import edu.rice.comp504.model.obj.User;
-
 import java.util.Map;
+
+import edu.rice.comp504.model.obj.User;
 
 public class CollectNamesCmd implements IUserCmd {
 

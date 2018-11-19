@@ -2,56 +2,56 @@
 
 ## 1. Server to Client Socket
 
-`void DispatcherAdapter::notifyClient(User receiver, Map<String, String> info);`
+`void ChatAppController::notify(Session user, AResponse response);`
 
-### 1.1. Type `newUser` => Environment event: login user
+### 1.1. Class `NewUserResponse` => Environment event: login user
 
 Newly loaded user. Locates in `model.DispatcherAdapter`
 
-- `String("type")`: `String("newUser")`
-- `String("userId")`: `int` The id of the new user
-- `String("userName")`: `int` The name of the new user
+- `type`: `String("NewUser")`
+- `userId`: `int` The id of the new user
+- `userName`: `int` The name of the new user
 
-### 1.2. Type `newRoom` => Environment event: create room
+### 1.2. Class `NewRoomResponse` => Environment event: create room
 
 Newly loaded chat room. Locates in `model.DispatcherAdapter`
 
-- `String("type")`: `String("newRoom")`
-- `String("roomId")`: `int` The id of the new room
-- `String("roomName")`: `int` The name of the new room
-- `String("ownerId")`: `int` The id of the room owner
+- `type`: `String("NewRoom")`
+- `roomId`: `int` The id of the new room
+- `roomName`: `int` The name of the new room
+- `ownerId`: `int` The id of the room owner
 
-### 1.3. Type `userRooms` => User event: room list change
+### 1.3. Class `UserRoomsResponse` => User event: room list change
 
 Chat room list of single user. Locates in `model.obj.User`
 
-- `String("type")`: `String("roomList")`
-- `String("userId")`: `int` The id of the current user
-- `String("joinedIds")`: `List<Integer>` List of ids of room that user has joined
-- `String("availableIds")`: `List<Integer>` List of ids of available room that user didn't join
+- `type`: `String("UserRooms")`
+- `userId`: `int` The id of the current user
+- `joinedIds`: `List<Integer>` List of ids of room that user has joined
+- `availableIds`: `List<Integer>` List of ids of available room that user didn't join
 
-### 1.4. Type `userChatHistory` => User event: reveive msg/ack
+### 1.4. Class `UserChatHistoryResponse` => User event: reveive msg/ack
 
 Chat history in single room between two specific users. Locates in `model.DispatcherAdapter`
 
-- `String("type")`: `String("userChatHistory")`
-- `String("content")`: `List<Message>` Chat history between two users at chat room
+- `type`: `String("UserChatHistory")`
+- `chatHistory`: `List<Message>` Chat history between two users at chat room
 
-### 1.5. Type `roomNotifications` => Room event: new notifications
+### 1.5. Class `RoomNotificationsResponse` => Room event: new notifications
 
 Notifications in single room. Locates in `model.obj.ChatRoom` & `model.DispatcherAdapter`
 
-- `String("type")`: `String("roomNotifications")`
-- `String("roomId")`: `int` The id of the current room
-- `String("content")`: `List<String>` List of notifications at chat room
+- `type`: `String("RoomNotifications")`
+- `roomId`: `int` The id of the current room
+- `notifications`: `List<String>` List of notifications at chat room
 
-### 1.6. Type `roomUsers` => Room event: user list change
+### 1.6. Class `RoomUsersResponse` => Room event: user list change
 
 Users in single room. Locates in `model.obj.ChatRoom` & `model.DispatcherAdapter`
 
-- `String("type")`: `String("roomUsers")`
-- `String("roomId")`: `int` The id of the current room
-- `String("content")`: `Map<Integer, String>` All users at chat room, maps from user id to user name
+- `type`: `String("RoomUsers")`
+- `roomId`: `int` The id of the current room
+- `users`: `Map<Integer, String>` All users at chat room, maps from user id to user name
 
 ## 2. Client to Server Socket
 

@@ -3,15 +3,15 @@ package edu.rice.comp504.model;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.gson.Gson;
-import edu.rice.comp504.model.cmd.DeleteRoomCmd;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.cmd.AppendRoomCmd;
+import edu.rice.comp504.model.cmd.DeleteRoomCmd;
 import edu.rice.comp504.model.cmd.IUserCmd;
 import edu.rice.comp504.model.obj.ChatRoom;
 import edu.rice.comp504.model.obj.Message;
 import edu.rice.comp504.model.obj.User;
+import edu.rice.comp504.model.res.*;
 import edu.rice.comp504.controller.ChatAppController;
 
 public class DispatcherAdapter extends Observable {
@@ -70,11 +70,8 @@ public class DispatcherAdapter extends Observable {
         int userId = this.userIdFromSession.get(session);
 
         // Refresh for a new login user
-        Map<String, String> info = new HashMap<>();
-        info.put("type", "newUser");
-        info.put("userId", Integer.toString(userId));
-        info.put("userName", name);
-        ChatAppController.notify(session, info);
+        AResponse res = new NewUserResponse(userId, name);
+        ChatAppController.notify(session, res);
 
         ChatRoom[] allRooms = this.rooms.values().toArray(new ChatRoom[0]);
         User user = new User(userId, session, name, age, location, school, allRooms);
@@ -109,12 +106,8 @@ public class DispatcherAdapter extends Observable {
         this.nextRoomId++;
 
         // Put a message for create room
-        Map<String, String> info = new HashMap<>();
-        info.put("type", "newRoom");
-        info.put("roomId", Integer.toString(room.getId()));
-        info.put("roomName", room.getName());
-        info.put("ownerId", Integer.toString(room.getOwner().getId()));
-        ChatAppController.notify(session, info);
+        AResponse res = new NewRoomResponse(room.getId(), room.getOwner().getId(), room.getName());
+        ChatAppController.notify(session, res);
 
         // Add the room to users' available list
         IUserCmd cmd = AppendRoomCmd.makeAppendCmd(room);
@@ -211,7 +204,8 @@ public class DispatcherAdapter extends Observable {
 
         // When user sends "hate", kick him/her out of all rooms
         if (raw.contains("hate")) {
-            for (ChatRoom joinedRoom : sender.getJoined()) {
+            for (int joinedRoomId : sender.getJoinedRoomIds()) {
+                ChatRoom joinedRoom = this.rooms.get(joinedRoomId);
                 joinedRoom.removeUser(sender, "Forced to leave due to illegal speech.");
             }
         } else {
@@ -225,13 +219,11 @@ public class DispatcherAdapter extends Observable {
             // Store the message to history
             room.storeMessage(sender, receiver, message);
 
-            // Notify the client
-            Gson gson = new Gson();
-            Map<String, String> info = new ConcurrentHashMap<>();
-            info.put("type", "userChatHistory");
             List<Message> history = this.getChatHistory(roomId, senderId, receiverId);
-            info.put("content", gson.toJson(history));
-            this.notifyClient(receiver, info);
+
+            // Notify the receiver of the message
+            AResponse res = new UserChatHistoryResponse(history);
+            ChatAppController.notify(receiver.getSession(), res);
         }
     }
 
@@ -243,30 +235,19 @@ public class DispatcherAdapter extends Observable {
     public void ackMessage(Session session, String body) {
         int msgId = Integer.valueOf(body);
         Message message = this.messages.get(msgId);
-        if (!message.isReceived()) {
-            message.setReceived(true);
+        if (!message.getIsReceived()) {
+            message.setIsReceived(true);
 
-            Gson gson = new Gson();
-            Map<String, String> info = new HashMap<>();
-            info.put("type", "userChatHistory");
+            int senderId = message.getSenderId();
+            User sender = this.users.get(senderId);
+
             List<Message> history = this.getChatHistory(message.getRoomId(),
                     message.getSenderId(), message.getReceiverId());
-            info.put("content", gson.toJson(history));
 
-            // Refresh whether or not received
-            int senderId = message.getSenderId();
-            this.notifyClient(this.users.get(senderId), info);
+            // Notify the sender whether or not received
+            AResponse res = new UserChatHistoryResponse(history);
+            ChatAppController.notify(sender.getSession(), res);
         }
-    }
-
-    /**
-     * Notify the client for refreshing.
-     * @param receiver user
-     * @param info the information for notifying
-     */
-    public void notifyClient(User receiver, Map<String, String> info) {
-        Session session = receiver.getSession();
-        ChatAppController.notify(session, info);
     }
 
     /**
@@ -278,35 +259,45 @@ public class DispatcherAdapter extends Observable {
         String[] tokens = body.split(" ");
         String type = tokens[0];
 
-        User receiver = this.users.get(this.userIdFromSession.get(session));
-        Map<String, String> info = new HashMap<>();
-        info.put("type", type);
+        AResponse res;
 
-        Gson gson = new Gson();
         int roomId;
         int userAId;
         int userBId;
         switch (type) {
             case "roomUsers":
                 roomId = Integer.parseInt(tokens[1]);
-                info.put("roomId", Integer.toString(roomId));
-                info.put("content", gson.toJson(this.getUsers(roomId)));
+                Map<Integer, String> users = this.getUsers(roomId);
+                res = new RoomUsersResponse(roomId, users);
                 break;
             case "roomNotifications":
                 roomId = Integer.parseInt(tokens[1]);
-                info.put("roomId", Integer.toString(roomId));
-                info.put("content", gson.toJson(this.getNotifications(roomId)));
+                List<String> notifications = this.getNotifications(roomId);
+                res = new RoomNotificationsResponse(roomId, notifications);
                 break;
             case "userChatHistory":
                 roomId = Integer.parseInt(tokens[1]);
                 userAId = this.userIdFromSession.get(session);
                 userBId = Integer.parseInt(tokens[2]);
-                info.put("content", gson.toJson(this.getChatHistory(roomId, userAId, userBId)));
+                List<Message> chatHistory = this.getChatHistory(roomId, userAId, userBId);
+                res = new UserChatHistoryResponse(chatHistory);
                 break;
-            default: break;
+            default:
+                res = new NullResponse();
+                break;
         }
 
-        this.notifyClient(receiver, info);
+        ChatAppController.notify(session, res);
+    }
+
+    /**
+     * Notify the client for refreshing.
+     * @param receiver user
+     * @param response the information for notifying
+     */
+    public void notifyClient(User receiver, AResponse response) {
+        Session session = receiver.getSession();
+        ChatAppController.notify(session, response);
     }
 
     /**

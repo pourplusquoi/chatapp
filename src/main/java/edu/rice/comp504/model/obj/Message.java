@@ -43,11 +43,11 @@ public class Message {
         return this.message;
     }
 
-    public boolean isReceived() {
+    public boolean getIsReceived() {
         return this.isReceived;
     }
 
-    public void setReceived(boolean val) {
+    public void setIsReceived(boolean val) {
         this.isReceived = val;
     }
 }

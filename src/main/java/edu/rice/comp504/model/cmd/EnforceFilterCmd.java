@@ -31,8 +31,8 @@ public class EnforceFilterCmd implements IUserCmd {
     @Override
     public void execute(User context) {
         // Filter out users and kick them out
-        if (!room.applyFilter(context)) {
-            room.removeUser(context, "Forced to leave due to chat room filter.");
+        if (!this.room.applyFilter(context)) {
+            this.room.removeUser(context, "Forced to leave due to chat room filter.");
         }
     }
 }

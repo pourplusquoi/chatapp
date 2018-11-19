@@ -1,13 +1,12 @@
 package edu.rice.comp504.model.cmd;
 
 import edu.rice.comp504.model.obj.User;
+import edu.rice.comp504.model.res.AResponse;
 import edu.rice.comp504.model.DispatcherAdapter;
-
-import java.util.Map;
 
 public class NotifyClientCmd implements IUserCmd {
 
-    private Map<String, String> info;
+    private AResponse res;
     private DispatcherAdapter dis;
 
     private static IUserCmd instance;
@@ -15,20 +14,20 @@ public class NotifyClientCmd implements IUserCmd {
     /**
      * Constructor.
      */
-    private NotifyClientCmd(Map<String, String> info, DispatcherAdapter dis) {
-        this.info = info;
+    private NotifyClientCmd(AResponse res, DispatcherAdapter dis) {
+        this.res = res;
         this.dis = dis;
     }
 
     /**
      * Singleton.
      */
-    public static IUserCmd makeNotifyClientCmd(Map<String, String> info, DispatcherAdapter dis) {
+    public static IUserCmd makeNotifyClientCmd(AResponse res, DispatcherAdapter dis) {
         if (instance == null) {
-            instance = new NotifyClientCmd(info, dis);
+            instance = new NotifyClientCmd(res, dis);
         } else {
             NotifyClientCmd cmd = (NotifyClientCmd) instance;
-            cmd.info = info;
+            cmd.res = res;
             cmd.dis = dis;
         }
         return instance;
@@ -36,6 +35,6 @@ public class NotifyClientCmd implements IUserCmd {
 
     @Override
     public void execute(User context) {
-        this.dis.notifyClient(context, this.info);
+        this.dis.notifyClient(context, this.res);
     }
 }

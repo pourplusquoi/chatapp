@@ -3,10 +3,11 @@ package edu.rice.comp504.model.obj;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.gson.Gson;
-
 import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.DispatcherAdapter;
+import edu.rice.comp504.model.res.AResponse;
+import edu.rice.comp504.model.res.RoomNotificationsResponse;
+import edu.rice.comp504.model.res.RoomUsersResponse;
 
 public class ChatRoom extends Observable {
 
@@ -173,23 +174,18 @@ public class ChatRoom extends Observable {
      * Refresh the chat room to update notification and user list.
      */
     private void refresh() {
-        Gson gson = new Gson();
-        Map<String, String> info = new HashMap<>();
         IUserCmd cmd;
+        AResponse res;
 
         // Refresh notification at chat room
-        info.put("type", "roomNotifications");
-        info.put("roomId", Integer.toString(this.id));
-        info.put("content", gson.toJson(this.notifications));
-        cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
+        res = new RoomNotificationsResponse(this.id, this.notifications);
+        cmd = NotifyClientCmd.makeNotifyClientCmd(res, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
 
         // Refresh name of users at chat room
-        info.put("type", "roomUsers");
-        info.put("roomId", Integer.toString(this.id));
-        info.put("content", gson.toJson(this.getUsers()));
-        cmd = NotifyClientCmd.makeNotifyClientCmd(info, this.dis);
+        res = new RoomUsersResponse(this.id, this.getUsers());
+        cmd = NotifyClientCmd.makeNotifyClientCmd(res, this.dis);
         this.setChanged();
         this.notifyObservers(cmd);
     }

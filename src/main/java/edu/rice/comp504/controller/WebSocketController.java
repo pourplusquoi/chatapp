@@ -1,11 +1,12 @@
 package edu.rice.comp504.controller;
 
-import edu.rice.comp504.model.DispatcherAdapter;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+
+import edu.rice.comp504.model.DispatcherAdapter;
 
 /**
  * Create a web socket for the server.
@@ -57,6 +58,7 @@ public class WebSocketController {
                 break;
             case "modify":
                 dis.modifyRoom(user, body);
+                break;
             case "join":
                 dis.joinRoom(user, body);
                 break;

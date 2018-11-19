@@ -1,9 +1,8 @@
 package edu.rice.comp504.controller;
 
 import java.io.IOException;
-import java.util.Map;
 
-import com.google.gson.JsonObject;
+import edu.rice.comp504.model.res.AResponse;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.DispatcherAdapter;
@@ -38,17 +37,13 @@ public class ChatAppController {
     }
 
     /**
-     *Notify session about the message.
+     * Notify session about the message.
      * @param user the session to notify
-     * @param info the notification information
+     * @param response the notification information
      */
-    public static void notify(Session user, Map<String, String> info) {
+    public static void notify(Session user, AResponse response) {
         try {
-            JsonObject jo = new JsonObject();
-            for (String key : info.keySet()) {
-                jo.addProperty(key, info.get(key));
-            }
-            user.getRemote().sendString(String.valueOf(jo));
+            user.getRemote().sendString(response.toJson());
         } catch (IOException e) {
             e.printStackTrace();
         }

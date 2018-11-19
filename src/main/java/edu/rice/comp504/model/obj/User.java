@@ -2,8 +2,10 @@ package edu.rice.comp504.model.obj;
 
 import java.util.*;
 
-import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+
+import edu.rice.comp504.model.res.AResponse;
+import edu.rice.comp504.model.res.UserRoomsResponse;
 import edu.rice.comp504.model.cmd.IUserCmd;
 
 public class User implements Observer {
@@ -16,8 +18,8 @@ public class User implements Observer {
     private String location;
     private String school;
 
-    private transient List<ChatRoom> joined;
-    private transient List<ChatRoom> available;
+    private List<Integer> joinedRoomIds;
+    private List<Integer> availableRoomIds;
 
     /**
      * Constructor.
@@ -32,8 +34,11 @@ public class User implements Observer {
         this.location = location;
         this.school = school;
 
-        this.joined = new LinkedList<>();
-        this.available = new LinkedList<>(Arrays.asList(rooms));
+        this.joinedRoomIds = new LinkedList<>();
+        this.availableRoomIds = new LinkedList<>();
+        for (ChatRoom room : rooms) {
+            this.availableRoomIds.add(room.getId());
+        }
     }
 
     public int getId() {
@@ -60,34 +65,38 @@ public class User implements Observer {
         return this.school;
     }
 
-    public List<ChatRoom> getJoined() {
-        return this.joined;
+    public List<Integer> getJoinedRoomIds() {
+        return this.joinedRoomIds;
     }
 
-    public List<ChatRoom> getAvailable() {
-        return this.available;
+    public List<Integer> getAvailableRoomIds() {
+        return this.availableRoomIds;
     }
 
     public void addRoom(ChatRoom room) {
-        this.available.add(room);
+        Integer roomId = room.getId();
+        this.availableRoomIds.add(roomId);
         this.refresh(room);
     }
 
     public void removeRoom(ChatRoom room) {
-        this.joined.remove(room);
-        this.available.remove(room);
+        Integer roomId = room.getId();
+        this.joinedRoomIds.remove(roomId);
+        this.availableRoomIds.remove(roomId);
         this.refresh(room);
     }
 
     public void moveToJoined(ChatRoom room) {
-        this.joined.add(room);
-        this.available.remove(room);
+        Integer roomId = room.getId();
+        this.joinedRoomIds.add(roomId);
+        this.availableRoomIds.remove(roomId);
         this.refresh(room);
     }
 
     public void moveToAvailable(ChatRoom room) {
-        this.available.add(room);
-        this.joined.remove(room);
+        Integer roomId = room.getId();
+        this.availableRoomIds.add(roomId);
+        this.joinedRoomIds.remove(roomId);
         this.refresh(room);
     }
 
@@ -97,7 +106,8 @@ public class User implements Observer {
      * @return whether or not successful
      */
     public boolean joinRoom(ChatRoom room) {
-        if (this.available.contains(room) && room.applyFilter(this)) {
+        Integer roomId = room.getId();
+        if (this.availableRoomIds.contains(roomId) && room.applyFilter(this)) {
             this.moveToJoined(room);
             room.addUser(this);
             this.refresh(room);
@@ -113,7 +123,8 @@ public class User implements Observer {
      * @return whether or not successful
      */
     public boolean leaveRoom(ChatRoom room) {
-        if (this.joined.contains(room)) {
+        Integer roomId = room.getId();
+        if (this.joinedRoomIds.contains(roomId)) {
             room.removeUser(this, "Volunteered to leave");
             this.refresh(room);
             return true;
@@ -124,27 +135,11 @@ public class User implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        ((IUserCmd)arg).execute(this);
+        ((IUserCmd) arg).execute(this);
     }
 
     private void refresh(ChatRoom room) {
-        Gson gson = new Gson();
-        Map<String, String> info = new HashMap<>();
-        info.put("type", "userRooms");
-        info.put("userId", Integer.toString(this.id));
-
-        int[] joinedIds = new int[this.joined.size()];
-        for (int i = 0; i < this.joined.size(); i++) {
-            joinedIds[i] = this.joined.get(i).getId();
-        }
-        info.put("joinedIds", gson.toJson(joinedIds));
-
-        int[] availableIds = new int[this.available.size()];
-        for (int i = 0; i < this.available.size(); i++) {
-            availableIds[i] = this.available.get(i).getId();
-        }
-        info.put("availableIds", gson.toJson(availableIds));
-
-        room.getDispatcher().notifyClient(this, info);
+        AResponse res = new UserRoomsResponse(this.id, this.joinedRoomIds, this.availableRoomIds);
+        room.getDispatcher().notifyClient(this, res);
     }
 }
