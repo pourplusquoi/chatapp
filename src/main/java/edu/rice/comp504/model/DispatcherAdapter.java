@@ -3,15 +3,12 @@ package edu.rice.comp504.model;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import edu.rice.comp504.model.cmd.JoinRoomCmd;
 import org.eclipse.jetty.websocket.api.Session;
 
-import edu.rice.comp504.model.cmd.AppendRoomCmd;
-import edu.rice.comp504.model.cmd.DeleteRoomCmd;
-import edu.rice.comp504.model.cmd.IUserCmd;
 import edu.rice.comp504.model.obj.ChatRoom;
 import edu.rice.comp504.model.obj.Message;
 import edu.rice.comp504.model.obj.User;
+import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.res.*;
 import edu.rice.comp504.controller.ChatAppController;
 
@@ -107,16 +104,16 @@ public class DispatcherAdapter extends Observable {
         this.nextRoomId++;
 
         // Put a message for create room
-        AResponse res = new NewRoomResponse(room.getId(), room.getOwner().getId(), room.getName());
+        AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
         ChatAppController.notify(session, res);
 
         // Add the room to users' available list
-        IUserCmd cmd = AppendRoomCmd.makeAppendCmd(room);
+        IUserCmd cmd = AddRoomCmd.makeAddRoomCmd(room);
         this.setChanged();
         this.notifyObservers(cmd);
 
         // Make owner join the room
-        owner.joinRoom(room);
+        room.addUser(owner);
         return room;
     }
 
@@ -137,7 +134,7 @@ public class DispatcherAdapter extends Observable {
      */
     public void unloadRoom(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
-        IUserCmd cmd = DeleteRoomCmd.makeDeteleCmd(room);
+        IUserCmd cmd = RemoveRoomCmd.makeRemoveRoomCmd(room);
         this.setChanged();
         this.notifyObservers(cmd);
         this.rooms.remove(room.getId());
@@ -154,28 +151,31 @@ public class DispatcherAdapter extends Observable {
 
         User user = this.users.get(userId);
         ChatRoom room = this.rooms.get(roomId);
-        IUserCmd cmd = JoinRoomCmd.makeJoinRoomCmd(room, user);
 
-        room.addObserver(user);
-        room.notifyUsers(cmd);
+        room.addUser(user);
     }
 
     /**
      * Make a user leave a chat room.
      * @param session session
-     * @param body of format "roomId"
+     * @param body of format "roomId reason"
      */
     public void leaveRoom(Session session, String body) {
-        int roomId = Integer.parseInt(body);
+        String [] tokens = body.split(" ", 2);
+        int roomId = Integer.parseInt(tokens[0]);
         int userId = this.userIdFromSession.get(session);
 
-        // TODO: make user leave room
+        User user = this.users.get(userId);
+        ChatRoom room = this.rooms.get(roomId);
+
+        String reason = tokens[1];
+        room.removeUser(user, reason);
     }
 
     /**
      * Make modification on chat room filer by the owner.
      * @param session session
-     * @param body of format "roomId + lower + upper + {[location],}*{[location]} + {[school],}*{[school]}"
+     * @param body of format "roomId lower upper {[location],}*{[location]} {[school],}*{[school]}"
      */
     public void modifyRoom(Session session, String body) {
         String [] tokens = body.split(" ");
@@ -208,9 +208,10 @@ public class DispatcherAdapter extends Observable {
 
         // When user sends "hate", kick him/her out of all rooms
         if (raw.contains("hate")) {
+            String reason = "Forced to leave due to illegal speech.";
             for (int joinedRoomId : sender.getJoinedRoomIds()) {
                 ChatRoom joinedRoom = this.rooms.get(joinedRoomId);
-                joinedRoom.removeUser(sender, "Forced to leave due to illegal speech.");
+                joinedRoom.removeUser(sender, reason);
             }
         } else {
             Message message = new Message(this.nextMessageId, roomId, senderId, receiverId, raw);
@@ -271,7 +272,7 @@ public class DispatcherAdapter extends Observable {
         switch (type) {
             case "roomUsers":
                 roomId = Integer.parseInt(tokens[1]);
-                Map<Integer, User> users = this.getUsers(roomId);
+                Map<Integer, String> users = this.getUsers(roomId);
                 res = new RoomUsersResponse(roomId, users);
                 break;
             case "roomNotifications":
@@ -296,11 +297,11 @@ public class DispatcherAdapter extends Observable {
 
     /**
      * Notify the client for refreshing.
-     * @param receiver user
+     * @param user user expected to receive the notification
      * @param response the information for notifying
      */
-    public void notifyClient(User receiver, AResponse response) {
-        Session session = receiver.getSession();
+    public void notifyClient(User user, AResponse response) {
+        Session session = user.getSession();
         ChatAppController.notify(session, response);
     }
 
@@ -309,7 +310,7 @@ public class DispatcherAdapter extends Observable {
      * @param roomId the id of the room
      * @return names of all chat room members
      */
-    private Map<Integer, User> getUsers(int roomId) {
+    private Map<Integer, String> getUsers(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
         return room.getUsers();
     }

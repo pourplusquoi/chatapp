@@ -42,22 +42,23 @@ public class JoinRoomCmd implements IUserCmd {
 
         // When the user to be joined is the current user
         if (this.user == context) {
-            List<Integer> joinedRoomIds = this.user.getJoinedRoomIds();
-            List<Integer> availableRoomIds = this.user.getAvailableRoomIds();
+            List<Integer> joinedRoomIds, availableRoomIds;
+            availableRoomIds = context.getAvailableRoomIds();
 
-            if (availableRoomIds.contains(roomId) && room.applyFilter(this.user)) {
-                this.user.moveToJoined(this.room);
+            if (availableRoomIds.contains(roomId) && this.room.applyFilter(context)) {
+                context.moveToJoined(this.room);
+
+                joinedRoomIds = context.getJoinedRoomIds();
+                availableRoomIds = context.getAvailableRoomIds();
+
                 AResponse res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-                dis.notifyClient(this.user, res);
+                dis.notifyClient(context, res);
             }
         }
 
-        String note = "User " + user.getName() + " joined.";
-        this.room.storeNotification(note);
-
         AResponse res;
         List<String> notifications = this.room.getNotifications();
-        Map<Integer, User> users = this.room.getUsers();
+        Map<Integer, String> users = this.room.getUsers();
 
         res = new RoomNotificationsResponse(roomId, notifications);
         dis.notifyClient(context, res);

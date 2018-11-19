@@ -4,8 +4,6 @@ import java.util.*;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import edu.rice.comp504.model.res.AResponse;
-import edu.rice.comp504.model.res.UserRoomsResponse;
 import edu.rice.comp504.model.cmd.IUserCmd;
 
 public class User implements Observer {
@@ -76,73 +74,28 @@ public class User implements Observer {
     public void addRoom(ChatRoom room) {
         Integer roomId = room.getId();
         this.availableRoomIds.add(roomId);
-        this.refresh(room);
     }
 
     public void removeRoom(ChatRoom room) {
         Integer roomId = room.getId();
         this.joinedRoomIds.remove(roomId);
         this.availableRoomIds.remove(roomId);
-        this.refresh(room);
     }
 
     public void moveToJoined(ChatRoom room) {
         Integer roomId = room.getId();
-        System.out.println(this.joinedRoomIds.size());
-        System.out.println(this.availableRoomIds.size());
         this.joinedRoomIds.add(roomId);
         this.availableRoomIds.remove(roomId);
-        System.out.println(this.joinedRoomIds.size());
-        System.out.println(this.availableRoomIds.size());
     }
 
     public void moveToAvailable(ChatRoom room) {
         Integer roomId = room.getId();
         this.availableRoomIds.add(roomId);
         this.joinedRoomIds.remove(roomId);
-        this.refresh(room);
-    }
-
-    /**
-     * Make user join the room
-     * @param room the room where some user join
-     * @return whether or not successful
-     */
-    public boolean joinRoom(ChatRoom room) {
-        Integer roomId = room.getId();
-        if (this.availableRoomIds.contains(roomId) && room.applyFilter(this)) {
-            this.moveToJoined(room);
-            room.addUser(this);
-            // this.refresh(room);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Make user volunteer to leave the room
-     * @param room the room where some user leave
-     * @return whether or not successful
-     */
-    public boolean leaveRoom(ChatRoom room) {
-        Integer roomId = room.getId();
-        if (this.joinedRoomIds.contains(roomId)) {
-            room.removeUser(this, "Volunteered to leave");
-            this.refresh(room);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override
     public void update(Observable o, Object arg) {
         ((IUserCmd) arg).execute(this);
-    }
-
-    private void refresh(ChatRoom room) {
-        AResponse res = new UserRoomsResponse(this.id, this.joinedRoomIds, this.availableRoomIds);
-        room.getDispatcher().notifyClient(this, res);
     }
 }

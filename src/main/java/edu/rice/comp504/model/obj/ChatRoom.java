@@ -5,9 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.DispatcherAdapter;
-import edu.rice.comp504.model.res.AResponse;
-import edu.rice.comp504.model.res.RoomNotificationsResponse;
-import edu.rice.comp504.model.res.RoomUsersResponse;
 
 public class ChatRoom extends Observable {
 
@@ -74,12 +71,25 @@ public class ChatRoom extends Observable {
     /**
      * function.
      */
-    public Map<Integer, User> getUsers() {
-        Map<Integer, User> users = new TreeMap<>();
+    public Map<Integer, String> getUsers() {
+        Map<Integer, String> users = new TreeMap<>();
         IUserCmd cmd = CollectNamesCmd.makeCollectNamesCmd(users);
         this.setChanged();
         this.notifyObservers(cmd);
         return users;
+    }
+
+    /**
+     * function.
+     */
+    public boolean applyFilter(User user) {
+        int age = user.getAge();
+        if (age < this.ageLowerBound || age > this.ageUpperBound) {
+            return false;
+        }
+
+        return Arrays.asList(this.locations).contains(user.getLocation())
+                && Arrays.asList(this.schools).contains(user.getSchool());
     }
 
     /**
@@ -100,52 +110,51 @@ public class ChatRoom extends Observable {
     /**
      * function.
      */
-    public boolean applyFilter(User user) {
-        int age = user.getAge();
-        if (age < this.ageLowerBound || age > this.ageUpperBound) {
+    public boolean addUser(User user) {
+        if (this.applyFilter(user) && user.getAvailableRoomIds().contains(this.id)) {
+            // Make notification
+            String note = "User " + user.getName() + " joined.";
+            this.notifications.add(note);
+
+            // Add user to the room obs list
+            this.addObserver(user);
+
+            IUserCmd cmd = JoinRoomCmd.makeJoinRoomCmd(this, user);
+            this.setChanged();
+            this.notifyObservers(cmd);
+            return true;
+
+        } else {
             return false;
         }
-
-        return Arrays.asList(this.locations).contains(user.getLocation())
-                && Arrays.asList(this.schools).contains(user.getSchool());
     }
 
     /**
      * function.
      */
-    public void addUser(User user) {
-        this.addObserver(user);
+    public boolean removeUser(User user, String reason) {
+        if (user.getJoinedRoomIds().contains(this.id)) {
+            // Make notification
+            String note = "User " + user.getName() + " left: " + reason;
+            this.notifications.add(note);
 
-        String note = "User " + user.getName() + " joined.";
-        this.notifications.add(note);
-        this.refresh();
-    }
+            IUserCmd cmd = LeaveRoomCmd.makeLeaveRoomCmd(this, user);
+            this.setChanged();
+            this.notifyObservers(cmd);
 
-    /**
-     * function.
-     */
-    public void removeUser(User user, String reason) {
-        if (user == this.owner) { // When room owner leaves, unload the room
-            this.deleteObservers();
-            this.dis.unloadRoom(this.id);
-        } else { // otherwise, remove the user from obs
-            this.deleteObserver(user);
-            user.moveToAvailable(this);
+            // Remove user from the room obs list
+            if (user == this.getOwner()) { // When room owner leaves, unload the room
+                this.deleteObservers();
+                this.dis.unloadRoom(this.id);
+            } else { // otherwise, remove the user from obs
+                this.deleteObserver(user);
+            }
+            this.freeChatHistory(user);
+            return true;
+
+        } else {
+            return false;
         }
-
-        String note = "User " + user.getName() + " left: " + reason;
-        this.notifications.add(note);
-        this.refresh();
-
-        this.freeChatHistory(user);
-    }
-
-    /**
-     * function.
-     * @param note
-     */
-    public void storeNotification(String note) {
-        this.notifications.add(note);
     }
 
     /**
@@ -176,33 +185,5 @@ public class ChatRoom extends Observable {
      */
     private void freeChatHistory(User user) {
         // TODO: parse the key and remove chat history related to user
-    }
-
-    /**
-     * function.
-     */
-    public void notifyUsers(IUserCmd cmd) {
-        this.setChanged();
-        this.notifyObservers(cmd);
-    }
-
-    /**
-     * Refresh the chat room to update notification and user list.
-     */
-    private void refresh() {
-        IUserCmd cmd;
-        AResponse res;
-
-        // Refresh notification at chat room
-        res = new RoomNotificationsResponse(this.id, this.notifications);
-        cmd = NotifyClientCmd.makeNotifyClientCmd(res, this.dis);
-        this.setChanged();
-        this.notifyObservers(cmd);
-
-        // Refresh name of users at chat room
-        res = new RoomUsersResponse(this.id, this.getUsers());
-        cmd = NotifyClientCmd.makeNotifyClientCmd(res, this.dis);
-        this.setChanged();
-        this.notifyObservers(cmd);
     }
 }
