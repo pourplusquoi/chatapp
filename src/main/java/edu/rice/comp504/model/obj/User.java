@@ -113,7 +113,7 @@ public class User implements Observer {
         if (this.availableRoomIds.contains(roomId) && room.applyFilter(this)) {
             this.moveToJoined(room);
             room.addUser(this);
-            this.refresh(room);
+            // this.refresh(room);
             return true;
         } else {
             return false;

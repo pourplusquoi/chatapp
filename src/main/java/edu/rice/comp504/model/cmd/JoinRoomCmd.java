@@ -60,9 +60,9 @@ public class JoinRoomCmd implements IUserCmd {
         Map<Integer, User> users = this.room.getUsers();
 
         res = new RoomNotificationsResponse(roomId, notifications);
-        dis.notifyClient(this.user, res);
+        dis.notifyClient(context, res);
 
         res = new RoomUsersResponse(roomId, users);
-        dis.notifyClient(this.user, res);
+        dis.notifyClient(context, res);
     }
 }
