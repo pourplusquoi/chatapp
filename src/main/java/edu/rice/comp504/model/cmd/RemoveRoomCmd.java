@@ -7,11 +7,14 @@ import edu.rice.comp504.model.obj.User;
 import edu.rice.comp504.model.res.AResponse;
 import edu.rice.comp504.model.res.UserRoomsResponse;
 
+/**
+ * The command to be used when a chatroom is removed
+ */
 public class RemoveRoomCmd implements IUserCmd {
 
-    private ChatRoom room;
+    private ChatRoom room;       // The chatroom which is removed
 
-    private static IUserCmd instance;
+    private static IUserCmd instance;   // The singleton instance of this cmd
 
     /**
      * Constructor.
@@ -32,6 +35,10 @@ public class RemoveRoomCmd implements IUserCmd {
         return instance;
     }
 
+    /**
+     * Observers' action when they are notified a room is removed
+     * @context a user which the command will operate on
+     */
     @Override
     public void execute(User context) {
         context.removeRoom(this.room);

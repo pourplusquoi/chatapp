@@ -11,18 +11,27 @@ import edu.rice.comp504.model.res.RoomNotificationsResponse;
 import edu.rice.comp504.model.res.RoomUsersResponse;
 import edu.rice.comp504.model.res.UserRoomsResponse;
 
+/**
+ * The command to be used when a user wants to join a chatroom
+ */
 public class JoinRoomCmd implements IUserCmd {
 
-    private ChatRoom room;
-    private User user;
+    private ChatRoom room;  // The chatroom which the user wants to join
+    private User user;      // The user who wants to join the chatroom
 
-    private static IUserCmd instance;
+    private static IUserCmd instance;   // The singleton instance of this cmd
 
+    /**
+     * Constructor.
+     */
     private JoinRoomCmd(ChatRoom room, User user) {
         this.room = room;
         this.user = user;
     }
 
+    /**
+     * Singleton.
+     */
     public static IUserCmd makeJoinRoomCmd(ChatRoom room, User user) {
         if (instance == null) {
             instance = new JoinRoomCmd(room, user);
@@ -34,6 +43,10 @@ public class JoinRoomCmd implements IUserCmd {
         return instance;
     }
 
+    /**
+     * Observers' action when they are notified a user has joined a chatroom
+     * @context a user which the command will operate on
+     */
     @Override
     public void execute(User context) {
         int userId = this.user.getId();

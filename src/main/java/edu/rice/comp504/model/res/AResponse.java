@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 public abstract class AResponse {
 
-    private String type;
+    private String type;    // The type of the response, use class name to denote type
 
     /**
      * Constructor.

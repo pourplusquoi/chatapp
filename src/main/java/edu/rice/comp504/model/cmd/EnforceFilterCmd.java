@@ -3,11 +3,14 @@ package edu.rice.comp504.model.cmd;
 import edu.rice.comp504.model.obj.ChatRoom;
 import edu.rice.comp504.model.obj.User;
 
+/**
+ * The command to be used when a chatroom sets/resets its restriction
+ */
 public class EnforceFilterCmd implements IUserCmd {
 
-    private ChatRoom room;
+    private ChatRoom room;      // The chatroom which sets new restriction
 
-    private static IUserCmd instance;
+    private static IUserCmd instance;   // The singleton instance of this cmd
 
     /**
      * Constructor.
@@ -28,6 +31,10 @@ public class EnforceFilterCmd implements IUserCmd {
         return instance;
     }
 
+    /**
+     * Observers' action when they are notified the restriction of the chatroom is changed
+     * @context a user which the command will operate on
+     */
     @Override
     public void execute(User context) {
         // Filter out users and kick them out
