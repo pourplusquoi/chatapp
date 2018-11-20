@@ -1,4 +1,4 @@
-# Socket Grammar
+# Socket Protocol and Grammar
 
 ## 1. Server to Client Socket
 
@@ -59,7 +59,7 @@ Users in single room. Locates in `model.obj.ChatRoom` & `model.DispatcherAdapter
 
 **Fields are sepearated by a white space**
 
-### 2.1 Command `login`
+### 2.1. Command `login`
 
 Login a user.
 
@@ -67,7 +67,7 @@ Login a user.
 
 **Example**: `login Shakeshack 30 USA Rice`
 
-### 2.2 Command `create`
+### 2.2. Command `create`
 
 Create a user
 
@@ -75,15 +75,15 @@ Create a user
 
 **Example**: `create Freedom 20 80 USA,Canada Rice,Harvard`
 
-### 2.3 Command `modify`
+### 2.3. Command `modify`
 
 Modify the chat room restriction
 
 **Grammar**: `modify [roomId] [ageLower] [ageUpper] {[location],}*{[location]} {[school],}*{[school]}`
 
-**Example**: `modify 0 30 50 USA, Harvard,MIT `
+**Example**: `modify 0 30 50 USA Harvard,MIT `
 
-### 2.4 Command `join`
+### 2.4. Command `join`
 
 Make a user join a chat room
 
@@ -91,7 +91,7 @@ Make a user join a chat room
 
 **Example**: `join 1`
 
-### 2.5 Command `leave`
+### 2.5. Command `leave`
 
 Make a user leave a chat room
 
@@ -99,7 +99,7 @@ Make a user leave a chat room
 
 **Example**: `leave 1`
 
-### 2.6 Command `send`
+### 2.6. Command `send`
 
 Sender sends a message to reveiver at a chat room
 
@@ -107,33 +107,41 @@ Sender sends a message to reveiver at a chat room
 
 **Example**: `send 2 1 Hello, how are you?`
 
-### 2.7 Command `ack`
+### 2.7. Command `ack`
 
-Receiver ack a message from sender at chat room
+Receiver ack a message from sender at a chat room
 
 **Grammar**: `ack [msgId]`
 
 **Example**: `ack 10`
 
-### 2.8 Command `query`
+### 2.8. Command `query`
 
 Query information (e.g. chat history, notifications, user list, etc.) from chat room
 
-#### 2.8.1 Keyword `roomUsers`
+**Grammar**: `query [keyword] {[param]}+`
 
-**Grammar**: `query roomUsers [roomId]`
+#### 2.8.1. Keyword `RoomUsers`
 
-**Example**: `query roomUsers 3`
+Query for all users at a chat room
 
-#### 2.8.2 Keyword `roomNotifications`
+**Grammar**: `query RoomUsers [roomId]`
 
-**Grammar**: `query roomNotifications [roomId]`
+**Example**: `query RoomUsers 3`
 
-**Example**: `query roomNotifications 3`
+#### 2.8.2. Keyword `RoomNotifications`
 
-#### 2.8.3 Keyword `userChatHistory`
+Query for all notifications at a chat room
 
-**Grammar**: `query userChatHistory [roomId] [anotherUserId]`
+**Grammar**: `query RoomNotifications [roomId]`
 
-**Example**: `query userChatHistory 2 10`
+**Example**: `query RoomNotifications 3`
+
+#### 2.8.3. Keyword `UserChatHistory`
+
+Query for chat history between client itself and anther user at a char room
+
+**Grammar**: `query UserChatHistory [roomId] [anotherUserId]`
+
+**Example**: `query UserChatHistory 2 10`
 

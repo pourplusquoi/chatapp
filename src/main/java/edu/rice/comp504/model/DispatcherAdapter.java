@@ -55,7 +55,7 @@ public class DispatcherAdapter extends Observable {
     /**
      * Load a user into the environment.
      * @param session session
-     * @param body of format "name + age + location + school"
+     * @param body of format "name age location school"
      * @return the user loaded
      */
     public User loadUser(Session session, String body) {
@@ -67,13 +67,19 @@ public class DispatcherAdapter extends Observable {
 
         int userId = this.userIdFromSession.get(session);
 
-        // Refresh for a new login user
-        AResponse res = new NewUserResponse(userId, name);
-        ChatAppController.notify(session, res);
-
         ChatRoom[] allRooms = this.rooms.values().toArray(new ChatRoom[0]);
         User user = new User(userId, session, name, age, location, school, allRooms);
         this.users.put(userId, user);
+
+        // Put a message for creating new user
+        AResponse res = new NewUserResponse(userId, name);
+        ChatAppController.notify(session, res);
+
+        // Put a message for chat rooms that new user have
+        List<Integer> joinedRoomIds = user.getJoinedRoomIds();
+        List<Integer> availableRoomIds = user.getAvailableRoomIds();
+        res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
+        ChatAppController.notify(session, res);
 
         this.addObserver(user);
         return user;
@@ -82,7 +88,7 @@ public class DispatcherAdapter extends Observable {
     /**
      * Load a room into the environment.
      * @param session session
-     * @param body of format "name + ageLower + ageUpper + {[location],}*{[location]} + {[school],}*{[school]}"
+     * @param body of format "name ageLower ageUpper {[location],}*{[location]} {[school],}*{[school]}"
      * @return return
      */
     public ChatRoom loadRoom(Session session, String body) {
@@ -103,7 +109,7 @@ public class DispatcherAdapter extends Observable {
         this.rooms.put(this.nextRoomId, room);
         this.nextRoomId++;
 
-        // Put a message for create room
+        // Put a message for creating new room
         AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
         ChatAppController.notify(session, res);
 
@@ -193,7 +199,7 @@ public class DispatcherAdapter extends Observable {
     /**
      * A sender sends a string message to a receiver.
      * @param session session
-     * @param body of format "roomId + receiverId + rawMessage"
+     * @param body of format "roomId receiverId rawMessage"
      */
     public void sendMessage(Session session, String body) {
 
@@ -258,35 +264,38 @@ public class DispatcherAdapter extends Observable {
     /**
      * Send query result from controller to front end.
      * @param session session
-     * @param body of format "type + roomId + [senderId] + [receiverId]"
+     * @param body of format "type roomId [senderId] [receiverId]"
      */
     public void query(Session session, String body) {
         String[] tokens = body.split(" ");
         String type = tokens[0];
 
-        AResponse res;
-
         int roomId;
         int userAId;
         int userBId;
+        AResponse res;
+
         switch (type) {
-            case "roomUsers":
+            case "RoomUsers":
                 roomId = Integer.parseInt(tokens[1]);
                 Map<Integer, String> users = this.getUsers(roomId);
                 res = new RoomUsersResponse(roomId, users);
                 break;
-            case "roomNotifications":
+
+            case "RoomNotifications":
                 roomId = Integer.parseInt(tokens[1]);
                 List<String> notifications = this.getNotifications(roomId);
                 res = new RoomNotificationsResponse(roomId, notifications);
                 break;
-            case "userChatHistory":
+
+            case "UserChatHistory":
                 roomId = Integer.parseInt(tokens[1]);
                 userAId = this.userIdFromSession.get(session);
                 userBId = Integer.parseInt(tokens[2]);
                 List<Message> chatHistory = this.getChatHistory(roomId, userAId, userBId);
                 res = new UserChatHistoryResponse(chatHistory);
                 break;
+
             default:
                 res = new NullResponse();
                 break;

@@ -2,9 +2,9 @@ package edu.rice.comp504.controller;
 
 import java.io.IOException;
 
-import edu.rice.comp504.model.res.AResponse;
 import org.eclipse.jetty.websocket.api.Session;
 
+import edu.rice.comp504.model.res.AResponse;
 import edu.rice.comp504.model.DispatcherAdapter;
 
 import static spark.Spark.*;

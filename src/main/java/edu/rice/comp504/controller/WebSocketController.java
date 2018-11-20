@@ -44,36 +44,45 @@ public class WebSocketController {
     public void onMessage(Session user, String message) {
         DispatcherAdapter dis = ChatAppController.getDispatcher();
 
-        // Assume message will be like "cmd + msg"
+        // Assume message will be like "[command] [body]"
         String[] tokens = message.split(" ", 2);
-        String cmd = tokens[0];
+        String command = tokens[0];
         String body = tokens[1];
 
-        switch (cmd) {
+        switch (command) {
+
             case "login":
                 dis.loadUser(user, body);
                 break;
+
             case "create":
                 dis.loadRoom(user, body);
                 break;
+
             case "modify":
                 dis.modifyRoom(user, body);
                 break;
+
             case "join":
                 dis.joinRoom(user, body);
                 break;
+
             case "leave":
                 dis.leaveRoom(user, body);
                 break;
+
             case "send":
                 dis.sendMessage(user, body);
                 break;
+
             case "ack":
                 dis.ackMessage(user, body);
                 break;
+
             case "query":
                 dis.query(user, body);
                 break;
+
             default: break;
         }
     }
