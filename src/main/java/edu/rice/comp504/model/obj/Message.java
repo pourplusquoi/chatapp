@@ -1,5 +1,8 @@
 package edu.rice.comp504.model.obj;
 
+/*
+The Message class defines a message object and private fileds of a message
+*/
 public class Message {
 
     private int id;

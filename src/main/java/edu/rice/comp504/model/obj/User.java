@@ -6,6 +6,9 @@ import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.cmd.IUserCmd;
 
+/*
+The User class defines a user object and private fields of a user
+*/
 public class User implements Observer {
 
     private int id;

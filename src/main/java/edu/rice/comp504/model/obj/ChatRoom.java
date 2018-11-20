@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.DispatcherAdapter;
 
+/*
+The Chatroom class defines a chat room object and private fileds of a chat room
+*/
 public class ChatRoom extends Observable {
 
     private int id;
