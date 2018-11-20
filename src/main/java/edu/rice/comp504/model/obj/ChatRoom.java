@@ -64,6 +64,10 @@ public class ChatRoom extends Observable {
         return this.notifications;
     }
 
+    public Map<String, List<Message>> getChatHistory() {
+        return this.chatHistory;
+    }
+
     public DispatcherAdapter getDispatcher() {
         return this.dis;
     }
@@ -161,17 +165,17 @@ public class ChatRoom extends Observable {
      * function.
      */
     public void storeMessage(User sender, User receiver, Message message) {
-        int userIdA = sender.getId();
-        int userIdB = receiver.getId();
+        int userAId = sender.getId();
+        int userBId = receiver.getId();
 
         // Ensure userIdA < userIdB
-        if (userIdA > userIdB) {
-            int temp = userIdB;
-            userIdB = userIdA;
-            userIdA = temp;
+        if (userAId > userBId) {
+            int temp = userBId;
+            userBId = userAId;
+            userAId = temp;
         }
 
-        String key = Integer.toString(userIdA) + "&" + Integer.toString(userIdB);
+        String key = Integer.toString(userAId) + "&" + Integer.toString(userBId);
         if (!this.chatHistory.containsKey(key)) {
             this.chatHistory.put(key, new LinkedList<>());
         }

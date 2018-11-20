@@ -47,9 +47,12 @@ public class LeaveRoomCmd implements IUserCmd {
             List<Integer> joinedRoomIds = context.getJoinedRoomIds();
             List<Integer> availableRoomIds = context.getAvailableRoomIds();
 
-            AResponse res = new UserRoomsResponse(context.getId(),
-                    joinedRoomIds, availableRoomIds);
-            dis.notifyClient(context, res);
+            // Notify client only when session is still connected
+            if (dis.containsSession(context.getSession())) {
+                AResponse res = new UserRoomsResponse(context.getId(),
+                        joinedRoomIds, availableRoomIds);
+                dis.notifyClient(context, res);
+            }
 
         } else {
             AResponse res;
@@ -57,7 +60,7 @@ public class LeaveRoomCmd implements IUserCmd {
             Map<Integer, String> users = this.room.getUsers();
 
             // Remember to exclude the leaving user from users map
-            users.remove(this.user.getId());
+            users.remove(userId);
 
             res = new RoomNotificationsResponse(roomId, notifications);
             dis.notifyClient(context, res);

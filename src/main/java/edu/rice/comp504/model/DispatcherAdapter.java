@@ -52,6 +52,10 @@ public class DispatcherAdapter extends Observable {
         return this.userIdFromSession.get(session);
     }
 
+    public boolean containsSession(Session session) {
+        return this.userIdFromSession.containsKey(session);
+    }
+
     /**
      * Load a user into the environment.
      * @param session session
@@ -106,21 +110,27 @@ public class DispatcherAdapter extends Observable {
         // First create the room
         ChatRoom room = new ChatRoom(this.nextRoomId, name,
                 owner, lower, upper, locations, schools, this);
-        this.rooms.put(this.nextRoomId, room);
-        this.nextRoomId++;
 
-        // Put a message for creating new room
-        AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
-        ChatAppController.notify(session, res);
+        if (room.applyFilter(owner)) {
+            this.rooms.put(this.nextRoomId, room);
+            this.nextRoomId++;
 
-        // Add the room to users' available list
-        IUserCmd cmd = AddRoomCmd.makeAddRoomCmd(room);
-        this.setChanged();
-        this.notifyObservers(cmd);
+            // Put a message for creating new room
+            AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
+            ChatAppController.notify(session, res);
 
-        // Make owner join the room
-        room.addUser(owner);
-        return room;
+            // Add the room to users' available list
+            IUserCmd cmd = AddRoomCmd.makeAddRoomCmd(room);
+            this.setChanged();
+            this.notifyObservers(cmd);
+
+            // Make owner join the room
+            room.addUser(owner);
+            return room;
+
+        } else { // When the room owner is not qualified
+            return null;
+        }
     }
 
     /**
@@ -129,9 +139,13 @@ public class DispatcherAdapter extends Observable {
      */
     public void unloadUser(int userId) {
         User user = this.users.get(userId);
+        this.users.remove(userId);
         this.userIdFromSession.remove(user.getSession());
 
-        // TODO: remove user from the environment, and automatically leave all joined chat rooms
+        for (Integer roomId : user.getJoinedRoomIds()) {
+            ChatRoom room = this.rooms.get(roomId);
+            room.removeUser(user, "Disconnected");
+        }
     }
 
     /**
@@ -140,10 +154,11 @@ public class DispatcherAdapter extends Observable {
      */
     public void unloadRoom(int roomId) {
         ChatRoom room = this.rooms.get(roomId);
+        this.rooms.remove(roomId);
+
         IUserCmd cmd = RemoveRoomCmd.makeRemoveRoomCmd(room);
         this.setChanged();
         this.notifyObservers(cmd);
-        this.rooms.remove(room.getId());
     }
 
     /**
@@ -162,20 +177,18 @@ public class DispatcherAdapter extends Observable {
     }
 
     /**
-     * Make a user leave a chat room.
+     * Make a user volunteer to leave a chat room.
      * @param session session
-     * @param body of format "roomId reason"
+     * @param body of format "roomId"
      */
     public void leaveRoom(Session session, String body) {
-        String [] tokens = body.split(" ", 2);
-        int roomId = Integer.parseInt(tokens[0]);
+        int roomId = Integer.parseInt(body);
         int userId = this.userIdFromSession.get(session);
 
         User user = this.users.get(userId);
         ChatRoom room = this.rooms.get(roomId);
 
-        String reason = tokens[1];
-        room.removeUser(user, reason);
+        room.removeUser(user, "Volunteered to leave.");
     }
 
     /**
@@ -349,7 +362,8 @@ public class DispatcherAdapter extends Observable {
             userAId = temp;
         }
 
-        // TODO: get chat history that stored in chat room
-        return null;
+        ChatRoom room = this.rooms.get(roomId);
+        String key = Integer.toString(userAId) + "&" + Integer.toString(userBId);
+        return room.getChatHistory().get(key);
     }
 }
