@@ -28,6 +28,14 @@ public class ChatRoom extends Observable {
 
     /**
      * Constructor.
+     * @param id the identity number of the chat room
+     * @param name the name of the chat room
+     * @param owner the chat room owner
+     * @param lower the lower bound of age restriction
+     * @param upper the upper bound of age restriction
+     * @param locations the location restriction
+     * @param schools the school restriction
+     * @param dispatcher the adapter
      */
     public ChatRoom(int id, String name, User owner,
                     int lower, int upper, String[] locations, String[] schools,
@@ -48,32 +56,55 @@ public class ChatRoom extends Observable {
         this.chatHistory = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Get the chat room id
+     * @return the chat room id
+     * */
     public int getId() {
         return this.id;
     }
 
+    /**
+     * Get the chat room name
+     * @return the chat room name
+     * */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Get the chat room owner
+     * @return a User object which is the owner of the chat room
+     * */
     public User getOwner() {
         return this.owner;
     }
 
+    /**
+     * Get a list of notifications
+     * @return notification list
+     * */
     public List<String> getNotifications() {
         return this.notifications;
     }
 
+    /**
+     * Get the chat history between two users
+     * @return chat history
+     * */
     public Map<String, List<Message>> getChatHistory() {
         return this.chatHistory;
     }
 
+    /**
+     * @return the dispatcher
+     * */
     public DispatcherAdapter getDispatcher() {
         return this.dis;
     }
 
     /**
-     * function.
+     * Return users in the chat room
      */
     public Map<Integer, String> getUsers() {
         Map<Integer, String> users = new TreeMap<>();
@@ -84,7 +115,8 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * Check if user satisfy the age, location and school restriction
+     * @return boolean value indicating whether the user is eligible to join the room
      */
     public boolean applyFilter(User user) {
         int age = user.getAge();
@@ -97,7 +129,8 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * Modify the current room age, location or school restriction
+     * Then apply the new restriction to all users in the chat room
      */
     public void modifyFilter(int lower, int upper, String[] locations, String[] schools) {
         this.ageLowerBound = lower;
@@ -112,7 +145,8 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * If user satisfy all restrictions and has the room in his available room list
+     * Make a user joined notification and then add user into the observer list
      */
     public boolean addUser(User user) {
         if (this.applyFilter(user) && user.getAvailableRoomIds().contains(this.id)) {
@@ -134,7 +168,9 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * Remove user from the chat room
+     * Set notification indicating the user left reason
+     * Delete user from observer list
      */
     public boolean removeUser(User user, String reason) {
         if (user.getJoinedRoomIds().contains(this.id)) {
@@ -162,7 +198,8 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * Append chat message into chat history list
+     * Map the single message body with key value (senderID&receiverID)
      */
     public void storeMessage(User sender, User receiver, Message message) {
         int userAId = sender.getId();
@@ -175,6 +212,7 @@ public class ChatRoom extends Observable {
             userAId = temp;
         }
 
+        // Key format (senderID&ReceiverID)
         String key = Integer.toString(userAId) + "&" + Integer.toString(userBId);
         if (!this.chatHistory.containsKey(key)) {
             this.chatHistory.put(key, new LinkedList<>());
@@ -185,7 +223,7 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * function.
+     * Parse the key and remove chat history related to user
      */
     private void freeChatHistory(User user) {
         // TODO: parse the key and remove chat history related to user
