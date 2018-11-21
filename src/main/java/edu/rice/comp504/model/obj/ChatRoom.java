@@ -122,6 +122,7 @@ public class ChatRoom extends Observable {
 
     /**
      * Check if user satisfy the age, location and school restriction.
+     * @param user the user to which the filer is applied
      * @return boolean value indicating whether the user is eligible to join the room
      */
     public boolean applyFilter(User user) {
@@ -135,8 +136,11 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * Modify the current room age, location or school restriction.
-     * Then apply the new restriction to all users in the chat room.
+     * Modify the current room age, location or school restriction, then apply the new restriction to all users in the chat room.
+     * @param lower the new lower bound of age restriction
+     * @param upper the new upper bound of age restriction
+     * @param locations the new location restriction
+     * @param schools the new school restriction
      */
     public void modifyFilter(int lower, int upper, String[] locations, String[] schools) {
         this.ageLowerBound = lower;
@@ -151,8 +155,9 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * If user satisfy all restrictions and has the room in his available room list.
-     * Make a user joined notification and then add user into the observer list.
+     * If user satisfy all restrictions and has the room in his available room list, make a user joined notification and then add user into the observer list.
+     * @param user the user that requests to join the room
+     * @return boolean value indicating whether or not join is successful
      */
     public boolean addUser(User user) {
         if (this.applyFilter(user) && user.getAvailableRoomIds().contains(this.id)) {
@@ -175,9 +180,10 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * Remove user from the chat room.
-     * Set notification indicating the user left reason.
-     * Delete user from observer list.
+     * Remove user from the chat room, set notification indicating the user left reason, delete user from observer list.
+     * @param user the user that is about to leave the room
+     * @param reason the reason why the user leaves
+     * @return boolean value indicating whether or not leave is successful
      */
     public boolean removeUser(User user, String reason) {
         if (user.getJoinedRoomIds().contains(this.id)) {
@@ -207,8 +213,10 @@ public class ChatRoom extends Observable {
     }
 
     /**
-     * Append chat message into chat history list.
-     * Map the single message body with key value (smallId&largeId).
+     * Append chat message into chat history list, map the single message body with key value (smallId&largeId).
+     * @param sender the user that sends the message
+     * @param receiver the user that receives the message
+     * @param message the message being sent
      */
     public void storeMessage(User sender, User receiver, Message message) {
         int userAId = sender.getId();
@@ -232,6 +240,7 @@ public class ChatRoom extends Observable {
 
     /**
      * Parse the key and remove chat history related to user.
+     * @param user the user whose chat history is being removed
      */
     private void freeChatHistory(User user) {
         // TODO: parse the key and remove chat history related to user
