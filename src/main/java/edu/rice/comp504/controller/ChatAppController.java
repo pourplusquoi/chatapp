@@ -1,10 +1,5 @@
 package edu.rice.comp504.controller;
 
-import java.io.IOException;
-
-import org.eclipse.jetty.websocket.api.Session;
-
-import edu.rice.comp504.model.res.AResponse;
 import edu.rice.comp504.model.DispatcherAdapter;
 
 import static spark.Spark.*;
@@ -34,19 +29,6 @@ public class ChatAppController {
 
         webSocket("/chatapp", WebSocketController.class);
         init();
-    }
-
-    /**
-     * Notify session about the message.
-     * @param user the session to notify
-     * @param response the notification information
-     */
-    public static void notify(Session user, AResponse response) {
-        try {
-            user.getRemote().sendString(response.toJson());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

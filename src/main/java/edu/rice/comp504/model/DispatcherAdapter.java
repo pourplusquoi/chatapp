@@ -1,5 +1,6 @@
 package edu.rice.comp504.model;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,7 +11,6 @@ import edu.rice.comp504.model.obj.Message;
 import edu.rice.comp504.model.obj.User;
 import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.res.*;
-import edu.rice.comp504.controller.ChatAppController;
 
 public class DispatcherAdapter extends Observable {
 
@@ -91,13 +91,13 @@ public class DispatcherAdapter extends Observable {
 
         // Put a message for creating new user
         AResponse res = new NewUserResponse(userId, name);
-        ChatAppController.notify(session, res);
+        notifyClient(session, res);
 
         // Put a message for chat rooms that new user have
         List<Integer> joinedRoomIds = user.getJoinedRoomIds();
         List<Integer> availableRoomIds = user.getAvailableRoomIds();
         res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-        ChatAppController.notify(session, res);
+        notifyClient(session, res);
 
         this.addObserver(user);
         return user;
@@ -131,10 +131,10 @@ public class DispatcherAdapter extends Observable {
 
             // Put a message for creating new room
             AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
-            ChatAppController.notify(session, res);
+            notifyClient(session, res);
 
             // Add the room to users' available list
-            IUserCmd cmd = AddRoomCmd.makeAddRoomCmd(room);
+            IUserCmd cmd = new AddRoomCmd(room);
             this.setChanged();
             this.notifyObservers(cmd);
 
@@ -170,7 +170,7 @@ public class DispatcherAdapter extends Observable {
         ChatRoom room = this.rooms.get(roomId);
         this.rooms.remove(roomId);
 
-        IUserCmd cmd = RemoveRoomCmd.makeRemoveRoomCmd(room);
+        IUserCmd cmd = new RemoveRoomCmd(room);
         this.setChanged();
         this.notifyObservers(cmd);
     }
@@ -267,7 +267,7 @@ public class DispatcherAdapter extends Observable {
 
             // Notify the receiver of the message
             AResponse res = new UserChatHistoryResponse(history);
-            ChatAppController.notify(receiver.getSession(), res);
+            notifyClient(receiver.getSession(), res);
         }
     }
 
@@ -290,7 +290,7 @@ public class DispatcherAdapter extends Observable {
 
             // Notify the sender whether or not received
             AResponse res = new UserChatHistoryResponse(history);
-            ChatAppController.notify(sender.getSession(), res);
+            notifyClient(sender.getSession(), res);
         }
     }
 
@@ -334,7 +334,7 @@ public class DispatcherAdapter extends Observable {
                 break;
         }
 
-        ChatAppController.notify(session, res);
+        notifyClient(session, res);
     }
 
     /**
@@ -342,9 +342,22 @@ public class DispatcherAdapter extends Observable {
      * @param user user expected to receive the notification
      * @param response the information for notifying
      */
-    public void notifyClient(User user, AResponse response) {
+    public static void notifyClient(User user, AResponse response) {
         Session session = user.getSession();
-        ChatAppController.notify(session, response);
+        notifyClient(session, response);
+    }
+
+    /**
+     * Notify session about the message.
+     * @param session the session to notify
+     * @param response the notification information
+     */
+    private static void notifyClient(Session session, AResponse response) {
+        try {
+            session.getRemote().sendString(response.toJson());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
