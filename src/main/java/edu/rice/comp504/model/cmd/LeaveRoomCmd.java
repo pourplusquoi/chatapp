@@ -12,40 +12,26 @@ import edu.rice.comp504.model.res.RoomUsersResponse;
 import edu.rice.comp504.model.res.UserRoomsResponse;
 
 /**
- * The command to be used when a user wants to leave a chatroom
+ * The command to be used when a user wants to leave a chat room.
  */
 public class LeaveRoomCmd implements IUserCmd {
 
-    private ChatRoom room;    // The chatroom which the user wants to leave
-    private User user;        // The user who wants to leave the chatroom
-
-    private static IUserCmd instance;   // The singleton instance of this cmd
+    private ChatRoom room;
+    private User user;
 
     /**
      * Constructor.
+     * @param room the chat room which the user wants to leave
+     * @param user the user who wants to leave the chat room
      */
-    private LeaveRoomCmd(ChatRoom room, User user) {
+    public LeaveRoomCmd(ChatRoom room, User user) {
         this.room = room;
         this.user = user;
     }
 
     /**
-     * Singleton.
-     */
-    public static IUserCmd makeLeaveRoomCmd(ChatRoom room, User user) {
-        if (instance == null) {
-            instance = new LeaveRoomCmd(room, user);
-        } else {
-            LeaveRoomCmd cmd = (LeaveRoomCmd) instance;
-            cmd.room = room;
-            cmd.user = user;
-        }
-        return instance;
-    }
-
-    /**
-     * Observers' action when they are notified a user has left a chatroom
-     * @context a user which the command will operate on
+     * Observers' action when they are notified a user has left a chat room.
+     * @param context a user which the command will operate on
      */
     @Override
     public void execute(User context) {
@@ -64,7 +50,7 @@ public class LeaveRoomCmd implements IUserCmd {
             if (dis.containsSession(context.getSession())) {
                 AResponse res = new UserRoomsResponse(context.getId(),
                         joinedRoomIds, availableRoomIds);
-                dis.notifyByUser(context, res);
+                DispatcherAdapter.notifyClient(context, res);
             }
 
         } else {
@@ -76,10 +62,10 @@ public class LeaveRoomCmd implements IUserCmd {
             users.remove(userId);
 
             res = new RoomNotificationsResponse(roomId, notifications);
-            dis.notifyByUser(context, res);
+            DispatcherAdapter.notifyClient(context, res);
 
             res = new RoomUsersResponse(roomId, users);
-            dis.notifyByUser(context, res);
+            DispatcherAdapter.notifyClient(context, res);
         }
     }
 }

@@ -4,36 +4,23 @@ import edu.rice.comp504.model.obj.ChatRoom;
 import edu.rice.comp504.model.obj.User;
 
 /**
- * The command to be used when a chatroom sets/resets its restriction
+ * The command to be used when a chat room sets/resets its restriction.
  */
 public class EnforceFilterCmd implements IUserCmd {
 
-    private ChatRoom room;      // The chatroom which sets new restriction
-
-    private static IUserCmd instance;   // The singleton instance of this cmd
+    private ChatRoom room;
 
     /**
      * Constructor.
+     * @param room the chat room which sets new restriction
      */
-    private EnforceFilterCmd(ChatRoom room) {
+    public EnforceFilterCmd(ChatRoom room) {
         this.room = room;
     }
 
     /**
-     * Singleton.
-     */
-    public static IUserCmd makeFilterCmd(ChatRoom room) {
-        if (instance == null) {
-            instance = new EnforceFilterCmd(room);
-        } else {
-            ((EnforceFilterCmd) instance).room = room;
-        }
-        return instance;
-    }
-
-    /**
-     * Observers' action when they are notified the restriction of the chatroom is changed
-     * @context a user which the command will operate on
+     * Observers' action when they are notified the restriction of the chat room is changed.
+     * @param context a user which the command will operate on
      */
     @Override
     public void execute(User context) {

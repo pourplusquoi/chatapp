@@ -12,46 +12,31 @@ import edu.rice.comp504.model.res.RoomUsersResponse;
 import edu.rice.comp504.model.res.UserRoomsResponse;
 
 /**
- * The command to be used when a user wants to join a chatroom
+ * The command to be used when a user wants to join a chat room.
  */
 public class JoinRoomCmd implements IUserCmd {
 
-    private ChatRoom room;  // The chatroom which the user wants to join
-    private User user;      // The user who wants to join the chatroom
-
-    private static IUserCmd instance;   // The singleton instance of this cmd
+    private ChatRoom room;
+    private User user;
 
     /**
      * Constructor.
+     * @param room the chat room which the user wants to join
+     * @param user the user who wants to join the chat room
      */
-    private JoinRoomCmd(ChatRoom room, User user) {
+    public JoinRoomCmd(ChatRoom room, User user) {
         this.room = room;
         this.user = user;
     }
 
     /**
-     * Singleton.
-     */
-    public static IUserCmd makeJoinRoomCmd(ChatRoom room, User user) {
-        if (instance == null) {
-            instance = new JoinRoomCmd(room, user);
-        } else {
-            JoinRoomCmd cmd = (JoinRoomCmd) instance;
-            cmd.room = room;
-            cmd.user = user;
-        }
-        return instance;
-    }
-
-    /**
-     * Observers' action when they are notified a user has joined a chatroom
-     * @context a user which the command will operate on
+     * Observers' action when they are notified a user has joined a chat room.
+     * @param context a user which the command will operate on
      */
     @Override
     public void execute(User context) {
         int userId = this.user.getId();
         int roomId = this.room.getId();
-        DispatcherAdapter dis = this.room.getDispatcher();
 
         // When the user to be joined is the current user
         if (this.user == context) {
@@ -65,7 +50,7 @@ public class JoinRoomCmd implements IUserCmd {
                 availableRoomIds = context.getAvailableRoomIds();
 
                 AResponse res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-                dis.notifyByUser(context, res);
+                DispatcherAdapter.notifyClient(context, res);
             }
         }
 
@@ -74,9 +59,9 @@ public class JoinRoomCmd implements IUserCmd {
         Map<Integer, String> users = this.room.getUsers();
 
         res = new RoomNotificationsResponse(roomId, notifications);
-        dis.notifyByUser(context, res);
+        DispatcherAdapter.notifyClient(context, res);
 
         res = new RoomUsersResponse(roomId, users);
-        dis.notifyByUser(context, res);
+        DispatcherAdapter.notifyClient(context, res);
     }
 }
