@@ -1,5 +1,6 @@
 package edu.rice.comp504.model;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -91,13 +92,13 @@ public class DispatcherAdapter extends Observable {
 
         // Put a message for creating new user
         AResponse res = new NewUserResponse(userId, name);
-        ChatAppController.notify(session, res);
+        notifyBySession(session, res);
 
         // Put a message for chat rooms that new user have
         List<Integer> joinedRoomIds = user.getJoinedRoomIds();
         List<Integer> availableRoomIds = user.getAvailableRoomIds();
         res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-        ChatAppController.notify(session, res);
+        notifyBySession(session, res);
 
         this.addObserver(user);
         return user;
@@ -131,7 +132,7 @@ public class DispatcherAdapter extends Observable {
 
             // Put a message for creating new room
             AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
-            ChatAppController.notify(session, res);
+            notifyBySession(session, res);
 
             // Add the room to users' available list
             IUserCmd cmd = AddRoomCmd.makeAddRoomCmd(room);
@@ -267,7 +268,7 @@ public class DispatcherAdapter extends Observable {
 
             // Notify the receiver of the message
             AResponse res = new UserChatHistoryResponse(history);
-            ChatAppController.notify(receiver.getSession(), res);
+            notifyBySession(receiver.getSession(), res);
         }
     }
 
@@ -290,7 +291,7 @@ public class DispatcherAdapter extends Observable {
 
             // Notify the sender whether or not received
             AResponse res = new UserChatHistoryResponse(history);
-            ChatAppController.notify(sender.getSession(), res);
+            notifyBySession(sender.getSession(), res);
         }
     }
 
@@ -334,7 +335,7 @@ public class DispatcherAdapter extends Observable {
                 break;
         }
 
-        ChatAppController.notify(session, res);
+        notifyBySession(session, res);
     }
 
     /**
@@ -342,9 +343,23 @@ public class DispatcherAdapter extends Observable {
      * @param user user expected to receive the notification
      * @param response the information for notifying
      */
-    public void notifyClient(User user, AResponse response) {
+    public void notifyByUser(User user, AResponse response) {
         Session session = user.getSession();
-        ChatAppController.notify(session, response);
+        notifyBySession(session, response);
+    }
+
+
+    /**
+     * Notify session about the message.
+     * @param session session expected to receive the notification
+     * @param response the information for notifying
+     */
+    private void notifyBySession(Session session, AResponse response) {
+        try{
+            session.getRemote().sendString(response.toJson());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

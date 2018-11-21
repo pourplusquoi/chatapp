@@ -48,6 +48,6 @@ public class RemoveRoomCmd implements IUserCmd {
         List<Integer> availableRoomIds = context.getAvailableRoomIds();
 
         AResponse res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-        this.room.getDispatcher().notifyClient(context, res);
+        this.room.getDispatcher().notifyByUser(context, res);
     }
 }

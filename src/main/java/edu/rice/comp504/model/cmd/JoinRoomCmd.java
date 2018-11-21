@@ -65,7 +65,7 @@ public class JoinRoomCmd implements IUserCmd {
                 availableRoomIds = context.getAvailableRoomIds();
 
                 AResponse res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds);
-                dis.notifyClient(context, res);
+                dis.notifyByUser(context, res);
             }
         }
 
@@ -74,9 +74,9 @@ public class JoinRoomCmd implements IUserCmd {
         Map<Integer, String> users = this.room.getUsers();
 
         res = new RoomNotificationsResponse(roomId, notifications);
-        dis.notifyClient(context, res);
+        dis.notifyByUser(context, res);
 
         res = new RoomUsersResponse(roomId, users);
-        dis.notifyClient(context, res);
+        dis.notifyByUser(context, res);
     }
 }

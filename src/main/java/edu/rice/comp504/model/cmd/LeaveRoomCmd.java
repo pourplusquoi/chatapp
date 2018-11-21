@@ -64,7 +64,7 @@ public class LeaveRoomCmd implements IUserCmd {
             if (dis.containsSession(context.getSession())) {
                 AResponse res = new UserRoomsResponse(context.getId(),
                         joinedRoomIds, availableRoomIds);
-                dis.notifyClient(context, res);
+                dis.notifyByUser(context, res);
             }
 
         } else {
@@ -76,10 +76,10 @@ public class LeaveRoomCmd implements IUserCmd {
             users.remove(userId);
 
             res = new RoomNotificationsResponse(roomId, notifications);
-            dis.notifyClient(context, res);
+            dis.notifyByUser(context, res);
 
             res = new RoomUsersResponse(roomId, users);
-            dis.notifyClient(context, res);
+            dis.notifyByUser(context, res);
         }
     }
 }

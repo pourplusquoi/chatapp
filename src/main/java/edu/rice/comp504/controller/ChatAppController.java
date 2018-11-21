@@ -37,19 +37,6 @@ public class ChatAppController {
     }
 
     /**
-     * Notify session about the message.
-     * @param user the session to notify
-     * @param response the notification information
-     */
-    public static void notify(Session user, AResponse response) {
-        try {
-            user.getRemote().sendString(response.toJson());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Get the heroku assigned port number.
      * @return The heroku assigned port number
      */
