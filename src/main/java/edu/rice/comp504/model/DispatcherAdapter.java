@@ -347,13 +347,14 @@ public class DispatcherAdapter extends Observable {
         notifyClient(session, response);
     }
 
+
     /**
      * Notify session about the message.
-     * @param session the session to notify
-     * @param response the notification information
+     * @param session session expected to receive the notification
+     * @param response the information for notifying
      */
-    private static void notifyClient(Session session, AResponse response) {
-        try {
+    private void notifyBySession(Session session, AResponse response) {
+        try{
             session.getRemote().sendString(response.toJson());
         } catch (IOException e) {
             e.printStackTrace();
