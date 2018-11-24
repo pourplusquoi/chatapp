@@ -1,84 +1,194 @@
 <html>
     <head>
         <title>Login</title>
+
+        <link rel="stylesheet" href="css/bootstrap.css"/>
+        <link rel="stylesheet" href="css/bootstrapValidator.css"/>
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bootstrapValidator.js"></script>
+
         <style type="text/css">
             body {
-                background-color: #E5E5E5;
+                /*background-color: #E5E5E5;*/
+                background-image: url("static/img/background.jpg");
+                font-family: "serif","sans-serif","cursive","fantasy","monospace";
             }
             #login-space {
-                width: 30%;
-                height: 90%;
-                margin: auto;
-                margin-top: 3%;
+                width: 70%;
+                height:90%;
+                margin: 3% auto;
                 background-color: white;
-                box-shadow: gray 1px 1px 10px 1px;
+                box-shadow: gray 1px 1px 1px 1px;
                 overflow: hidden;
+                border: 1px solid;
+                border-radius: 20px;
             }
-            .login-form {
+            .form-group {
                 width: 50%;
                 height: auto;
-                margin: auto;
-                padding-top: 15%;
-                font-size: 1.5em;
-            }
-            #username-input {
-                height: 4%;
-                width: 100%;
-                font-size: 1.5em;
-            }
-
-            #age-input {
-                height: 4%;
-                width: 100%;
-                font-size: 1.5em;
-            }
-
-            .select {
-                height: 4%;
-                width: 100%;
+                margin: 1em auto;
+                /*padding-top: 10%;*/
                 font-size: 1em;
             }
             #login-btn {
                 width: 100%;
-                height: 4%;
+                height: 6%;
                 align-content: center;
                 font-size: 1em;
+                border-width:1px;
+                border-radius:8px;
+                background-color:white;
+                color:#3f83df;
+                text-decoration:none;
+                display:inline-block;
+                -webkit-transition-duration:0.4s;
+                transition-duration:0.4s; cursor:pointer;
+            }
+            #login-btn:hover {
+                background-color:#3f83df;
+                color:white;
             }
         </style>
     </head>
     <body>
         <div id="login-space">
-            <form>
-                <div class="login-form">
-                    <span>USERNAME:</span><br/>
-                    <input id="username-input">
+            <div style="width:80%; height:auto; margin:0 auto; text-align:center">
+                <img src="static/img/freedom-logo.png" style="width:60%; height:auto;">
+            </div>
+            <form id="login-form" method="post">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" class="form-control" name="username">
                 </div>
 
-                <div class="login-form">
-                    <span>AGE:</span><br/>
-                    <input id="age-input">
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="text" class="form-control" name="age">
                 </div>
 
-                <div class="login-form">
-                    <span>LOCATION:</span><br/>
-                    <select class="select">
-                        <option>North America</option>
-                        <option>Asia</option>
+                <div class="form-group">
+                    <label>Region:</label>
+                    <select class="select form-control" id="region-select" name="region">
+                        <option value="Invalid">-----Please Select-----</option>
+                        <option value="North America">North America</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Other Region">Other Location</option>
                     </select>
                 </div>
 
-                <div class="login-form">
-                    <span>SCHOOL:</span><br/>
-                    <select class="select">
-                        <option>RICE UNIVERSITY</option>
-                        <option>OTHER UNIVERISTY</option>
+                <div class="form-group">
+                    <label>School:</label>
+                    <select class="select form-control" id="school-select" name="school">
+                        <option value="Invalid">-----Please Select-----</option>
+                        <optgroup label="North America">
+                            <option value="N-Rice University">Rice University</option>
+                            <option value="N-Harvard University">Harvard University</option>
+                        </optgroup>
+                        <optgroup label="Asia">
+                            <option value="A-TsingHua University">TsingHua University</option>
+                            <option value="A-Beijing University">Beijing University</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="O-Other University">Other University</option>
+                        </optgroup>
                     </select>
                 </div>
 
-                <div class="login-form">
-                    <input id="login-btn" type="submit" value="LOGIN">
+                <div class="form-group" style="margin-top:2em;">
+                    <button type="submit" id="login-btn" value="login" onclick="validateInput()">Login</button>
                 </div>
             </form>
         </div>
     </body>
+
+    <script type="text/javascript">
+        function validateInput() {
+
+            /* Add validator function with each input */
+            $('#login-form').bootstrapValidator({
+                message: 'This value is not vaid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    username: {
+                        message: 'Username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Username cannot be null'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z0-9_]+$/,
+                                message: 'Username must contain only lowercase or uppercase letters, numbers, and underscores'
+                            }
+                        }
+                    },
+                    age: {
+                        message: 'Age is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Age cannot be null'
+                            },
+                            regexp: {
+                                regexp: /^[0-9_]+$/,
+                                message: 'Age must be numbers'
+                            },
+                            between: {
+                                min: 1,
+                                max: 140,
+                                message: 'Invalid age'
+                            }
+                        }
+                    },
+                    region: {
+                        message: 'Region is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Must select one region'
+                            },
+                            callback: { //Custom validate rules
+                                message: 'Invalid Select',
+                                callback: function(value, validator) {
+                                    var selectedRegion = $('#region-select option:selected').val();
+                                    if(selectedRegion == "Invalid") { return false; }
+                                    else { return true; }
+                                }
+                            }
+                        }
+                    },
+                    school: {
+                        message: 'School is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Must select one school'
+                            },
+                            callback: { //Custom validate rules
+                                message: 'Selected school is not in selected region',
+                                callback: function(value, validator) {
+                                    var thisSchoolRegionSymbol = value.split("-")[0];
+                                    var selectedRegion = $('#region-select option:selected').val();
+                                    if(thisSchoolRegionSymbol=="Invalid" || !selectedRegion.startsWith(thisSchoolRegionSymbol)) { return false; }
+                                    else { return true; }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            .on('success.form.bv', function(e) {
+                // Prevent submit form
+                e.preventDefault();
+
+                var $form     = $(e.target),
+                    validator = $form.data('bootstrapValidator');
+                //$form.submit();
+                alert("Login success");
+            });
+
+        }
+    </script>
 </html>

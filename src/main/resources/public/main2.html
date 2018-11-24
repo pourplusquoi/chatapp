@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Chatroom</title>
+
+        <link rel="stylesheet" href="css/bootstrap.css"/>
+        <link rel="stylesheet" href="css/popover.css"/>
+        <link rel="stylesheet" href="css/main2.css"/>
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    </head>
+    
+    <body>
+        <div id="whole-page">
+            <!--*********************************************************************-->
+            <!--*****************************User profile****************************-->
+            <!--*********************************************************************-->
+            <div id="heading-group">
+                <div id="heading-logo">FREEDOM CHATROOM</div>
+                <div id="heading-myself">
+                    <span class="glyphicon glyphicon-user"></span> heyLizi    <!-- 要改成popover，鼠标移动到用户名上时显示用户信息 -->
+                </div>
+            </div>
+
+            <!--*********************************************************************-->
+            <!--***************************Chat Room Group***************************-->
+            <!--*********************************************************************-->
+            <div id="chat-room-group">
+                <div id="room-category">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#">Joined</a></li>
+                        <li><a href="#">Available</a></li>
+                    </ul>
+                </div>
+                <div id="room-list">
+                    <div class="row pre-scrollable">
+                        <ul class="list-group">
+                           <li class="list-group-item"><img src="static/img/Letter-G.jpg" style="width:12px; height:12px;"> &nbsp;Game Day</li>
+                            <li class="list-group-item"><img src="static/img/Letter-E.jpg" style="width:12px; height:12px;"> &nbsp;Entropy</li>
+                            <li class="list-group-item active"><img src="static/img/Letter-F.jpg" style="width:12px; height:12px;"> &nbsp;Freedom</li>
+                            <li class="list-group-item"><img src="static/img/Letter-P.jpg" style="width:12px; height:12px;"> &nbsp;Pacman Go</li>
+                            <li class="list-group-item"><img src="static/img/Letter-D.jpg" style="width:12px; height:12px;"> &nbsp;Duncan Owls</li>
+                            <li class="list-group-item"><img src="static/img/Letter-F.jpg" style="width:12px; height:12px;"> &nbsp;Freedom Unlimited</li>
+                            <li class="list-group-item"><img src="static/img/Letter-N.jpg" style="width:12px; height:12px;"> &nbsp;NullSleep</li>
+                            <li class="list-group-item"><img src="static/img/Letter-T.jpg" style="width:12px; height:12px;"> &nbsp;Team Houston</li>
+                            <!-- <li class="list-group-item"><img src="static/img/Letter-G.jpg" style="width:12px; height:12px;"> &nbsp;Game Day</li>
+                            <li class="list-group-item"><img src="static/img/Letter-E.jpg" style="width:12px; height:12px;"> &nbsp;Entropy</li>
+                            <li class="list-group-item active"><img src="static/img/Letter-F.jpg" style="width:12px; height:12px;"> &nbsp;Freedom</li>
+                            <li class="list-group-item"><img src="static/img/Letter-P.jpg" style="width:12px; height:12px;"> &nbsp;Pacman Go</li>
+                            <li class="list-group-item"><img src="static/img/Letter-D.jpg" style="width:12px; height:12px;"> &nbsp;Duncan Owls</li>
+                            <li class="list-group-item"><img src="static/img/Letter-F.jpg" style="width:12px; height:12px;"> &nbsp;Freedom Unlimited</li>
+                            <li class="list-group-item"><img src="static/img/Letter-N.jpg" style="width:12px; height:12px;"> &nbsp;NullSleep</li>
+                            <li class="list-group-item"><img src="static/img/Letter-T.jpg" style="width:12px; height:12px;"> &nbsp;Team Houston</li> -->
+                        </ul>
+                    </div>
+                </div>
+                <!--这里现在有一个问题，如果上面列表中的元素非常多，那么创建chatroom会被顶出界，不知道怎么改了-->
+                <div id="create-room">
+                    <a href="#"><img src="static/img/plus-init.png" style="width:25px; height:25px;"> &nbsp;Create New Chatroom </a>
+                </div>
+            </div>
+
+            <!--*********************************************************************-->
+            <!--***************************Chat interface****************************-->
+            <!--*********************************************************************-->
+            <div id="chat-interface">
+                <div id="chat-interface-title">
+                    <span>Chatroom Freedom with Doc Lead</span>
+                </div>
+
+                <div id="chat-interface-textarea">
+                    <ul id="message-content">
+                        <li><img class="imgleft" src="static/img/user.png"><span class="spanleft">GUI is really awful!!!</span></li>
+                        <li><img class="imgright" src="static/img/user.png"><span class="spanright">I agree!!!</span></li>
+                        <li><img class="imgleft" src="static/img/user.png"><span class="spanleft">Maybe nothing is easy~</span></li>
+                        <li><img class="imgright" src="static/img/user.png"><span class="spanright">Right! How about going die?</span></li>
+                        <li><img class="imgleft" src="static/img/user.png"><span class="spanleft">Ok, Go!</span></li>
+                    </ul>
+                </div>
+
+                <div id="chat-interface-input">
+                    <textarea id="user-input-textarea">Type your message here</textarea>
+                    <button id="send-btn" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-send"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!--*************************************************************************-->
+            <!--***************************Chat Room User List***************************-->
+            <!--*************************************************************************-->
+            <div id="room-user-group">
+                <div style="height:6%; text-align: center; padding:4%;">
+                    <label> Users </label>
+                </div>
+                <div id="user-list">
+                    <div class="row pre-scrollable">
+                        <ul class="list-group">
+                            <li class="list-group-item"><img src="static/img/crown.png" style="width:12px; height:12px;"> &nbsp;Team Lead</li>
+                            <li class="list-group-item"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Tech Lead</li>
+                            <li class="list-group-item active"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Doc Lead</li>
+                            <li class="list-group-item"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Developer 1</li>
+                            <li class="list-group-item"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Developer 2</li>
+                            <li class="list-group-item"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Developer 3</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!---------------------------JavaScript-------------------------------------------->
+        <script src="js/popover.js"></script>
+        <!--------------------------------------------------------------------------------->
+    </body>
+</html>
