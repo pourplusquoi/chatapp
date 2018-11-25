@@ -5,6 +5,15 @@ $(function() {
         // Define the behavior of element
         console.log(element.attr('id'));
         var id = element.attr('id');
+        console.log(element.attr('value'));
+        var restriction = element.attr('value');
+        // For those value is not undefined
+        if(restriction != null){
+            var age = restriction.split(',')[0];
+            var location = restriction.split(',')[1];
+            var school = restriction.split(',')[2];
+            console.log(age + ";" + location + ";" + "school");
+        }
         
         // Show the current user tag
         if(id == "current-user"){
@@ -14,7 +23,7 @@ $(function() {
                 title: element.attr('name'), // User name
                 placement: 'bottom',
                 content: function(){
-                    return userDetail();
+                    return userDetail(age, location, school);
                 }       
             // When user mouse enter, show the details
             }).on("mouseenter", function(){
@@ -80,13 +89,13 @@ function chatRoomDetail(){
 }  
 
 // The user tag interface
-function userDetail(){      
+function userDetail(age, location, school){      
     var data = $(
         "<div class='chat-room-details'>" + 
             "<ul>" + 
-                "<li><span><img src='static/img/age.png'>Age</span></li>" +                
-                "<li><span><img src='static/img/location.png'>North America</span></li>" +
-                "<li><span><img src='static/img/university.png'>Rice University</span></li>" +
+                "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +                
+                "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
+                "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
             "</ul>" +
         "</div>"
     );            
