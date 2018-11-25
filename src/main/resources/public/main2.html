@@ -3,12 +3,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Chatroom</title>
 
+        <!--**************************************************-->
+        <!--**************Bootstrap and jquery****************-->
+        <!--**************************************************-->
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!--**************************************************-->
+        
         <link rel="stylesheet" href="css/bootstrap.css"/>
         <link rel="stylesheet" href="css/popover.css"/>
         <link rel="stylesheet" href="css/main2.css"/>
 
+        <!--
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        -->
     </head>
     
     <body>
@@ -19,7 +31,7 @@
             <div id="heading-group">
                 <div id="heading-logo">FREEDOM CHATROOM</div>
                 <div id="heading-myself">
-                    <span class="glyphicon glyphicon-user"></span> heyLizi    <!-- 要改成popover，鼠标移动到用户名上时显示用户信息 -->
+                    <span class="glyphicon glyphicon-user" name="heyLizi" id="current-user" data-toggle="popover">heyLizi</span>   <!-- 要改成popover，鼠标移动到用户名上时显示用户信息 -->
                 </div>
             </div>
 
@@ -36,7 +48,11 @@
                 <div id="room-list">
                     <div class="row pre-scrollable">
                         <ul class="list-group">
-                           <li class="list-group-item"><img src="static/img/Letter-G.jpg" style="width:12px; height:12px;"> &nbsp;Game Day</li>
+                            <!--******************************-->
+                            <!--添加popover给Game day *实例*-->
+                           <li class="list-group-item" name="Game Day" data-toggle="popover">
+                               <img src="static/img/Letter-G.jpg" style="width:12px; height:12px;"> &nbsp;Game Day
+                            </li>
                             <li class="list-group-item"><img src="static/img/Letter-E.jpg" style="width:12px; height:12px;"> &nbsp;Entropy</li>
                             <li class="list-group-item active"><img src="static/img/Letter-F.jpg" style="width:12px; height:12px;"> &nbsp;Freedom</li>
                             <li class="list-group-item"><img src="static/img/Letter-P.jpg" style="width:12px; height:12px;"> &nbsp;Pacman Go</li>

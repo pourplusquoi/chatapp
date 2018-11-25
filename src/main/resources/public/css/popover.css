@@ -1,8 +1,8 @@
 /*To Change background color of popover*/
 .popover {
-    width: 25em;
-    background: #404649;
-    border: 1px solid #000000;
+    width: 20em;
+    background: #eeeeee;
+    border: 1px solid #eeeeee;
 }
             
 /*Change the arrow color*/
@@ -10,12 +10,17 @@
     border-right-color: #404649;
 }
 
+/*Change the arrow color*/
+.popover.bottom .arrow:after {
+    border-right-color: #404649;
+}
+
 /*Change popover title*/    
 .popover-title {
     padding: 0;
     border: none;
-    background: #272727;
-    font-size: 1.5em;
+    background: #3f83df;
+    font-size: 1.2em;
     color: white;
     text-align: center;
 }
@@ -26,16 +31,16 @@
 }
             
 .chat-room-details span {
-    color: white;
+    color: black;
     display: inline-block;
-    font-size: 1.2em;
+    font-size: 1em;
     margin-top: 0.5em;
     letter-spacing: 0.1em;                
 }
             
 .chat-room-details img {
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.1em;
+    height: 1.1em;
     padding: 0;
     vertical-align:middle;
     margin-right: 0.5em;
