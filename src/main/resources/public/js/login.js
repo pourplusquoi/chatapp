@@ -1,70 +1,4 @@
-<html>
-    <head>
-        <title>Login</title>
-
-        <link rel="stylesheet" href="css/bootstrap.css"/>
-        <link rel="stylesheet" href="css/bootstrapValidator.css"/>
-        <link rel="stylesheet" href="css/login.css"/>
-        
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/bootstrapValidator.js"></script>
-        <script type="text/javascript" src="js/login.js"></script>
-        
-    </head>
-    <body>
-        <div id="login-space">
-            <div style="width:80%; height:auto; margin:0 auto; text-align:center">
-                <img src="static/img/freedom-logo.png" style="width:60%; height:auto;">
-            </div>
-            <form id="login-form" method="post">
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" class="form-control" name="username">
-                </div>
-
-                <div class="form-group">
-                    <label>Age:</label>
-                    <input type="text" class="form-control" name="age">
-                </div>
-
-                <div class="form-group">
-                    <label>Region:</label>
-                    <select class="select form-control" id="region-select" name="region">
-                        <option value="Invalid">-----Please Select-----</option>
-                        <option value="North America">North America</option>
-                        <option value="Asia">Asia</option>
-                        <option value="Other Region">Other Location</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>School:</label>
-                    <select class="select form-control" id="school-select" name="school">
-                        <option value="Invalid">-----Please Select-----</option>
-                        <optgroup label="North America">
-                            <option value="N-Rice University">Rice University</option>
-                            <option value="N-Harvard University">Harvard University</option>
-                        </optgroup>
-                        <optgroup label="Asia">
-                            <option value="A-TsingHua University">TsingHua University</option>
-                            <option value="A-Beijing University">Beijing University</option>
-                        </optgroup>
-                        <optgroup label="Other">
-                            <option value="O-Other University">Other University</option>
-                        </optgroup>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-top:2em;">
-                    <button type="submit" id="login-btn" value="login" onclick="validateInput()">Login</button>
-                </div>
-            </form>
-        </div>
-    </body>
-<!--
-    <script type="text/javascript">
-        function validateInput() {
+function validateInput() {
 
             /* Add validator function with each input */
             $('#login-form').bootstrapValidator({
@@ -147,9 +81,16 @@
                     validator = $form.data('bootstrapValidator');
                 //$form.submit();
                 //alert("Login success");
+                
+                /**
+                当用户验证成功时
+                设置login界面为hidden
+                设置main界面为viewable
+                **/
                 console.log("success");
+                var loginDiv = document.getElementById("login-space");
+                var mainDiv = document.getElementById("whole-page");
+                loginDiv.style.display = "none";
+                mainDiv.style.display = "block";
             });
         }
-    </script>
--->
-</html>
