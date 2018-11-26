@@ -99,7 +99,7 @@ public class DispatcherAdapter extends Observable {
         String region = getFromJSON(o, "region");
         String school = getFromJSON(o, "school");
 
-        System.out.println(name+age+region+school);
+//        System.out.println(name+age+region+school);
 
         int userId = this.userIdFromSession.get(session);
 
@@ -128,14 +128,27 @@ public class DispatcherAdapter extends Observable {
      * @return the new room that has been loaded
      */
     public ChatRoom loadRoom(Session session, String body) {
-        String [] tokens = body.split(" ");
-        String name = tokens[0];
-        int lower = Integer.parseInt(tokens[1]);
-        int upper = Integer.parseInt(tokens[2]);
+//        System.out.println(body);
+//        return null;
 
-        String[] locations = tokens[3].split(",");
-        String[] schools = tokens[4].split(",");
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(body).getAsJsonObject();
+        String name = getFromJSON(o, "roomname");
+        int lower = Integer.parseInt(getFromJSON(o,"agelb"));
+        int upper = Integer.parseInt(getFromJSON(o,"ageub"));
+        String[] locations = getFromJSON(o,"regions").replace("\"","").split(",");
+        String[] schools = getFromJSON(o,"schools").replace("\"","").split(",");
+//        System.out.println(Arrays.toString(locations));
+//        System.out.println(Arrays.toString(schools));
 
+//        String [] tokens = body.split(" ");
+//        String name = tokens[0];
+//        int lower = Integer.parseInt(tokens[1]);
+//        int upper = Integer.parseInt(tokens[2]);
+//
+//        String[] locations = tokens[3].split(",");
+//        String[] schools = tokens[4].split(",");
+//
         int ownerId = this.userIdFromSession.get(session);
         User owner = this.users.get(ownerId);
 
@@ -149,9 +162,11 @@ public class DispatcherAdapter extends Observable {
 
             // Put a message for creating new room
             AResponse res = new NewRoomResponse(room.getId(), ownerId, name);
+            System.out.println("put a message for creating new room");
             notifyClient(session, res);
 
             // Add the room to users' available list
+            System.out.println("Add the room to users' available list");
             IUserCmd cmd = new AddRoomCmd(room);
             this.setChanged();
             this.notifyObservers(cmd);
@@ -161,6 +176,7 @@ public class DispatcherAdapter extends Observable {
             return room;
 
         } else { // When the room owner is not qualified
+            System.out.println("not qualified");
             return null;
         }
     }

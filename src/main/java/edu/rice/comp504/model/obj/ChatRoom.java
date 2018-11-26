@@ -126,11 +126,20 @@ public class ChatRoom extends Observable {
      * @return boolean value indicating whether the user is eligible to join the room
      */
     public boolean applyFilter(User user) {
+
+//        System.out.println(user.getAge());
+//        System.out.println(this.ageLowerBound + " " + this.ageUpperBound);
         int age = user.getAge();
         if (age < this.ageLowerBound || age > this.ageUpperBound) {
             return false;
         }
-
+//        System.out.println(Arrays.toString(this.locations));
+//        System.out.println(user.getLocation());
+//        System.out.println(Arrays.toString(this.schools));
+//        System.out.println(user.getSchool());
+//        System.out.println(Arrays.asList(this.locations).contains(user.getLocation())
+//                && Arrays.asList(this.schools).contains(user.getSchool()));
+//        System.out.println(this.locations[0]);
         return Arrays.asList(this.locations).contains(user.getLocation())
                 && Arrays.asList(this.schools).contains(user.getSchool());
     }
