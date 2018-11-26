@@ -1,5 +1,7 @@
 package edu.rice.comp504.controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -44,13 +46,22 @@ public class WebSocketController {
     public void onMessage(Session user, String message) {
         DispatcherAdapter dis = ChatAppController.getDispatcher();
 
-        // Assume message will be like "[command] [body]"
-        String[] tokens = message.split(" ", 2);
-        String command = tokens[0];
-        String body = tokens[1];
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(message).getAsJsonObject();
+//        System.out.println(o);
+        String type = o.get("type").toString();
+        //to remove the double quotation mark
+        type = type.substring(1, type.length() - 1);
 
-        switch (command) {
 
+//        // Assume message will be like "[command] [body]"
+//        String[] tokens = message.split(" ", 2);
+//        String command = tokens[0];
+//        String body = tokens[1];
+
+        String body = message;
+        switch (type) {
+//            switch (command) {
             case "login":
                 dis.loadUser(user, body);
                 break;

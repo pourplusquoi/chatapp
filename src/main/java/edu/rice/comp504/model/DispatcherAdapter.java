@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.eclipse.jetty.websocket.api.Session;
 
 import edu.rice.comp504.model.obj.ChatRoom;
@@ -70,6 +72,12 @@ public class DispatcherAdapter extends Observable {
         return this.userIdFromSession.containsKey(session);
     }
 
+    //private helper function to get string from JSON
+    private static String getFromJSON(JsonObject jsonObject, String key){
+        String ret = jsonObject.get(key).toString();
+        return ret.substring(1, ret.length() - 1);
+    }
+
     /**
      * Load a user into the environment.
      * @param session the session that requests to called the method
@@ -77,20 +85,30 @@ public class DispatcherAdapter extends Observable {
      * @return the new user that has been loaded
      */
     public User loadUser(Session session, String body) {
-        String[] tokens = body.split(" ");
-        String name = tokens[0];
-        int age = Integer.parseInt(tokens[1]);
-        String location = tokens[2];
-        String school = tokens[3];
+//        String[] tokens = body.split(" ");
+//        String name = tokens[0];
+//        int age = Integer.parseInt(tokens[1]);
+//        String region = tokens[2];
+//        String school = tokens[3];
+//        System.out.println(name+age+region+school);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(body).getAsJsonObject();
+        String name = getFromJSON(o, "username");
+        int age  = Integer.parseInt(getFromJSON(o,"age"));
+        String region = getFromJSON(o, "region");
+        String school = getFromJSON(o, "school");
+
+        System.out.println(name+age+region+school);
 
         int userId = this.userIdFromSession.get(session);
 
         ChatRoom[] allRooms = this.rooms.values().toArray(new ChatRoom[0]);
-        User user = new User(userId, session, name, age, location, school, allRooms);
+        User user = new User(userId, session, name, age, region, school, allRooms);
         this.users.put(userId, user);
 
         // Put a message for creating new user
-        AResponse res = new NewUserResponse(userId, name);
+        AResponse res = new NewUserResponse(userId, name, age, region, school);
         notifyClient(session, res);
 
         // Put a message for chat rooms that new user have
@@ -354,6 +372,7 @@ public class DispatcherAdapter extends Observable {
      */
     private static void notifyClient(Session session, AResponse response) {
         try {
+//            System.out.println("I am here");
             session.getRemote().sendString(response.toJson());
         } catch (IOException e) {
             e.printStackTrace();
