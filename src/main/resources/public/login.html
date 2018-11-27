@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <title>Login</title>
+
+        <link rel="stylesheet" href="css/bootstrap.css"/>
+        <link rel="stylesheet" href="css/bootstrapValidator.css"/>
+        <link rel="stylesheet" href="css/login.css"/>
+        
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bootstrapValidator.js"></script>
+        <script type="text/javascript" src="js/login.js"></script>
+        
+    </head>
+    <body>
+        <div id="login-space">
+            <div style="width:80%; height:auto; margin:0 auto; text-align:center">
+                <img src="static/img/freedom-logo.png" style="width:60%; height:auto;">
+            </div>
+            <form id="login-form" method="post">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" class="form-control" name="username">
+                </div>
+
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="text" class="form-control" name="age">
+                </div>
+
+                <div class="form-group">
+                    <label>Region:</label>
+                    <select class="select form-control" id="region-select" name="region">
+                        <option value="Invalid">-----Please Select-----</option>
+                        <option value="North America">North America</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Other Region">Other Location</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>School:</label>
+                    <select class="select form-control" id="school-select" name="school">
+                        <option value="Invalid">-----Please Select-----</option>
+                        <optgroup label="North America">
+                            <option value="N-Rice University">Rice University</option>
+                            <option value="N-Harvard University">Harvard University</option>
+                        </optgroup>
+                        <optgroup label="Asia">
+                            <option value="A-TsingHua University">TsingHua University</option>
+                            <option value="A-Beijing University">Beijing University</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="O-Other University">Other University</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:2em;">
+                    <button type="submit" id="login-btn" value="login" onclick="validateInput()">Login</button>
+                </div>
+            </form>
+        </div>
+    </body>
+<!--
+    <script type="text/javascript">
+        function validateInput() {
+
+            /* Add validator function with each input */
+            $('#login-form').bootstrapValidator({
+                message: 'This value is not vaid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    username: {
+                        message: 'Username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Username cannot be null'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z0-9_]+$/,
+                                message: 'Username must contain only lowercase or uppercase letters, numbers, and underscores'
+                            }
+                        }
+                    },
+                    age: {
+                        message: 'Age is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Age cannot be null'
+                            },
+                            regexp: {
+                                regexp: /^[0-9_]+$/,
+                                message: 'Age must be numbers'
+                            },
+                            between: {
+                                min: 1,
+                                max: 140,
+                                message: 'Invalid age'
+                            }
+                        }
+                    },
+                    region: {
+                        message: 'Region is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Must select one region'
+                            },
+                            callback: { //Custom validate rules
+                                message: 'Invalid Select',
+                                callback: function(value, validator) {
+                                    var selectedRegion = $('#region-select option:selected').val();
+                                    if(selectedRegion == "Invalid") { return false; }
+                                    else { return true; }
+                                }
+                            }
+                        }
+                    },
+                    school: {
+                        message: 'School is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: 'Must select one school'
+                            },
+                            callback: { //Custom validate rules
+                                message: 'Selected school is not in selected region',
+                                callback: function(value, validator) {
+                                    var thisSchoolRegionSymbol = value.split("-")[0];
+                                    var selectedRegion = $('#region-select option:selected').val();
+                                    if(thisSchoolRegionSymbol=="Invalid" || !selectedRegion.startsWith(thisSchoolRegionSymbol)) { return false; }
+                                    else { return true; }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            .on('success.form.bv', function(e) {
+                // Prevent submit form
+                e.preventDefault();
+
+                var $form     = $(e.target),
+                    validator = $form.data('bootstrapValidator');
+                //$form.submit();
+                //alert("Login success");
+                console.log("success");
+            });
+        }
+    </script>
+-->
+</html>

@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Chatroom</title>
+        <!--**************************************************-->
+        <!--**************Bootstrap and jquery****************-->
+        <!--**************************************************-->
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!--**************************************************-->
+        <!--Import CSS files-->
+        <link rel="stylesheet" href="css/popover.css" type="text/css" />
+        <link rel="stylesheet" href="css/main.css" type="text/css" />
+    </head>
+    
+    <body>
+        <!--*********************************************************************-->
+        <!--***************************Chat Room Group***************************-->
+        <!--*********************************************************************-->
+        <div id="chat-room-group">
+            <!--Joined Chat Rooms-->
+            <div id="joined-chat-room">
+                <div class="chat-room-title">
+                    <span>chatapp</span>
+                </div>
+                <!--*******Test for popover*******-->
+                <div class="chat-rooms" name="DaTieGunZi" data-toggle="popover">
+                    <div style="background-image: url(static/img/D.png)" class="chat-rooms-initial"></div>
+                </div>
+                <!--************************-->
+                <!--For selected set no data-toggle-->
+                <div class="chat-rooms-selected" name="RiceOwls">
+                    <div style="background-image: url(static/img/R.png)" class="chat-rooms-initial"></div>
+                </div>
+                <div class="chat-rooms" data-toggle="popover" name="Freedom">
+                    <div style="background-image: url(static/img/F.png)" class="chat-rooms-initial"></div>
+                </div>
+                <div class="chat-rooms" data-toggle="popover" name="Offers">
+                    <div style="background-image: url(static/img/O.png)" class="chat-rooms-initial"></div>
+                </div>
+            </div>
+            
+            <!--Aviable Chat Rooms-->
+            <div id="available-chat-room">
+                <div id="divid-space" style="height: 7%;"></div>
+                <div class="chat-rooms">
+                    <div style="background-image: url(static/img/A.png)" class="chat-rooms-initial"></div>
+                </div>
+                <div class="chat-rooms">
+                    <div style="background-image: url(static/img/B.png)" class="chat-rooms-initial"></div>
+                </div>
+                <div class="chat-rooms">
+                    <div style="background-image: url(static/img/C.png)" class="chat-rooms-initial"></div>
+                </div>
+                <div class="chat-rooms">
+                    <div style="background-image: url(static/img/D.png)" class="chat-rooms-initial"></div>
+                </div>
+            </div>
+            <!--Create new chat room button-->
+            <div id="create-chat-room">
+                <div id="chat-rooms-create">
+                </div>
+            </div>
+        </div>
+        <!--*************************************************************************-->
+        <!--***************************Chat Room User List***************************-->
+        <!--*************************************************************************-->
+        <div id="user-information">
+            <div id="user-profile">
+                <span># Rice Chat Group</span>
+            </div>
+            <!--Online users-->
+            <div id="online-users">
+                <ul>
+                    <span class="user-group">-- OWNER --</span>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/crown.png">
+                            <span>404NotFound</span>
+                        </div>
+                    </li>
+                    <span class="user-group">-- USERS --</span>
+                    <li>
+                        <div class="online-user-list" style="background-color: #676767">
+                            <img src="static/img/user.png" >
+                            <span style="color: white">hd25</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>zjl</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>yang</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>Envision</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>我来举个栗子</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>这是一个User</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>这还是一个User</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--Current user-->
+            <div id="current-user">
+                <div id="the-user">
+                    <img src="static/img/user.png">
+                    <span>Harlan0103</span>
+                </div>
+            </div>
+            <!--Group message-->
+            <!--
+            <div id="group-message">
+                <span>/*user: testuser is removed forcely by chat room owner*/</span>
+            </div>
+            -->
+        </div>
+        
+        <!--***************************Chat interface***************************-->
+        <div id="chat-interface">
+            <div id="chat-interface-title">
+                <span>hd25</span>
+            </div>
+            
+            <div id="chat-interface-textarea">
+                
+            </div>
+            
+            <div id="chat-interface-input">
+                <textarea id="user-input-textarea"></textarea>
+                <button id="send-btn" class="btn btn-primary">SEND</button>
+            </div>
+        </div>
+        
+        <!---------------------------JavaScript-------------------------------------------->
+        <script src="js/popover.js"></script>
+        <!--------------------------------------------------------------------------------->
+    </body>
+</html>
