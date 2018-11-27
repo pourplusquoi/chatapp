@@ -24,13 +24,17 @@ function heartBeat(){
 
 window.onload = function() {
 
-    heartbeatTimer = setInterval(heartBeat, 15000);
+    //heartbeatTimer = setInterval(heartBeat, 15000);
 
     var loginDiv = document.getElementById("login-space");
     var mainDiv = document.getElementById("whole-page");
     // 设置login为可视 main为隐藏
     loginDiv.style.display = "block";
     mainDiv.style.display = "none";
+
+    //set "exit all joined room button" hidden
+    var exitRoomBtn = document.getElementById("exit-all-btn");
+    exitRoomBtn.style.display = "none";
 
     webSocket.onclose = () => {
         clearInterval(heartbeatTimer);
@@ -262,6 +266,9 @@ function userRoomsHandler(message){
         var initial = room["name"][0].toUpperCase();
         $("#joined-room-list ul").append('<li action="exit" data-toggle="popover" value="'+room["ageRange"]+','+room["locations"] +',' + room["schools"]  +'" class="list-group-item js_open_room" roomid = "' + roomId + '"><img src="static/img/Letter-' + initial + '.jpg" style="width:12px; height:12px;"> &nbsp;' + room["name"] +'</li>');//<button class = "js_exit">EXIT</button>
     }
+    //set "exit all joined room button" visible
+    var exitRoomBtn = document.getElementById("exit-all-btn");
+    exitRoomBtn.style.display = "blick";
 
     //if current room no longer in the joined room list but there is a curRoomId, which means it has been removed by the owner, and needs to update the chatroom
     var curRoomId = $("#chat-interface-title-span").attr("roomid");
@@ -399,8 +406,8 @@ function validateInput() {
                         message: 'Invalid age'
                     }
                 }
-            },
-            region: {
+            }
+            /*region: {
                 message: 'Region is not valid',
                 validators: {
                     notEmpty: {
@@ -432,7 +439,7 @@ function validateInput() {
                         }
                     }
                 }
-            }
+            }*/
         }
     })
         .on('success.form.bv', function(e) {
@@ -481,7 +488,9 @@ function exitAllRooms(){
     sendMessage(JSON.stringify(data));
 }
 
-
+function cancelCreate() {
+    $('#myTab a:first').tab('show'); //click the first tab to show the joined chatroom list
+}
 function createRoom(){
     var roomname = $('#cr_roomname').val();
     var agelb = $('#cr_agelb').val();
@@ -584,54 +593,48 @@ function popover() {
     });
 
 // The chat room detail interface
-    function exitChatRoomDetail(roomid, age, location, school) {
-        var data = $(
-            "<div class='chat-room-details'>" +
-            "<ul>" +
-            "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
-            "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
-            "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
-            "</ul>" +
+function exitChatRoomDetail(roomid, age, location, school) {
+    var data = $(
+        "<div class='chat-room-details'>" +
+        "<ul>" +
+        "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
+        "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
+        "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
+        "</ul>" +
 
-            "<input id='btn' type='button' value='EXIT' onclick='exitTest(" + roomid + ")' class='btn btn-primary'/>" +
-            "</div>"
-        );
-        return data;
-    }
+        "<input id='btn' type='button' value='EXIT' onclick='exitTest(" + roomid + ")' class='btn btn-primary'/>" +
+        "</div>"
+    );
+    return data;
+}
 
-    function joinChatRoomDetail(roomid, age, location, school) {
-        var data = $(
-            "<div class='chat-room-details'>" +
-            "<ul>" +
-            "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
-            "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
-            "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
-            "</ul>" +
+function joinChatRoomDetail(roomid, age, location, school) {
+    var data = $(
+        "<div class='chat-room-details'>" +
+        "<ul>" +
+        "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
+        "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
+        "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
+        "</ul>" +
 
-            "<input id='btn' type='button' value='JOIN' onclick='joinTest(" + roomid + ")' class='btn btn-primary'/>" +
-            "</div>"
-        );
-        return data;
-    }
-
-
+        "<input id='btn' type='button' value='JOIN' onclick='joinTest(" + roomid + ")' class='btn btn-primary'/>" +
+        "</div>"
+    );
+    return data;
+}
 
 // The user tag interface
-    function userDetail(age, location, school) {
-        var data = $(
-            "<div class='chat-room-details'>" +
-            "<ul>" +
-            "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
-            "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
-            "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
-            "</ul>" +
-            "</div>"
-        );
-        return data;
-    }
+function userDetail(age, location, school) {
+    var data = $(
+        "<div class='chat-room-details'>" +
+        "<ul>" +
+        "<li><span><img src='static/img/age.png'>" + age + "</span></li>" +
+        "<li><span><img src='static/img/location.png'>" + location + "</span></li>" +
+        "<li><span><img src='static/img/university.png'>" + school + "</span></li>" +
+        "</ul>" +
+        "</div>"
+    );
+    return data;
+}
 
-// Exist the chat room
-    function exit() {
-        alert('老铁别走啊');
-    }
 }
