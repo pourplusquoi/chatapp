@@ -2,6 +2,8 @@ body {
     /*background-color: #E5E5E5;*/
     background-image: url("../static/img/background.jpg");
     font-family: "serif","sans-serif","cursive","fantasy","monospace";
+    background-size: cover;
+    background-attachment: fixed;
 }
 /*************************/
 /***css for login-page****/
@@ -314,6 +316,7 @@ body {
     height: 18%;
     display:block;
     font-size: 0.9em;
+    resize: none;
 }
             
 /***Message***/
