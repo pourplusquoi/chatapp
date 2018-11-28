@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.rice.comp504</OriginalElement>
+  <nodes>
+    <node x="0.0" y="0.0">edu.rice.comp504.model.DispatcherAdapter</node>
+    <node x="263.0" y="659.0">edu.rice.comp504.model.cmd.LeaveRoomCmd</node>
+    <node x="487.0" y="0.0">edu.rice.comp504.model.obj.User</node>
+    <node x="584.0" y="981.0">edu.rice.comp504.model.obj.RoomRestrictionInfo</node>
+    <node x="0.0" y="907.0">edu.rice.comp504.model.res.NewUserResponse</node>
+    <node x="783.0" y="907.0">edu.rice.comp504.model.res.RoomUsersResponse</node>
+    <node x="565.0" y="907.0">edu.rice.comp504.model.res.RoomNotificationsResponse</node>
+    <node x="450.0" y="659.0">edu.rice.comp504.model.cmd.JoinRoomCmd</node>
+    <node x="299.0" y="981.0">edu.rice.comp504.controller.WebSocketController</node>
+    <node x="0.0" y="558.0">edu.rice.comp504.model.obj.Message</node>
+    <node x="543.5" y="558.0">edu.rice.comp504.model.cmd.IUserCmd</node>
+    <node x="165.0" y="907.0">edu.rice.comp504.model.res.GroupMessageResponse</node>
+    <node x="1275.0" y="907.0">edu.rice.comp504.model.res.UserRoomsResponse</node>
+    <node x="637.0" y="659.0">edu.rice.comp504.model.cmd.AddRoomCmd</node>
+    <node x="691.0" y="786.0">edu.rice.comp504.model.res.AResponse</node>
+    <node x="974.0" y="0.0">edu.rice.comp504.model.obj.ChatRoom</node>
+    <node x="362.0" y="907.0">edu.rice.comp504.model.res.UserChatHistoryResponse</node>
+    <node x="824.0" y="659.0">edu.rice.comp504.model.cmd.RemoveRoomCmd</node>
+    <node x="1135.0" y="907.0">edu.rice.comp504.model.res.NullResponse</node>
+    <node x="0.0" y="981.0">edu.rice.comp504.controller.ChatAppController</node>
+    <node x="961.0" y="907.0">edu.rice.comp504.model.res.NewRoomResponse</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.rice.comp504.model.res.UserRoomsResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="1354.0" y="857.0" />
+      <point x="826.0" y="857.0" />
+      <point x="63.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.UserChatHistoryResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="453.5" y="877.0" />
+      <point x="736.0" y="877.0" />
+      <point x="-27.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.NewRoomResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="1038.0" y="877.0" />
+      <point x="790.0" y="877.0" />
+      <point x="27.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.NewUserResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="72.5" y="857.0" />
+      <point x="700.0" y="857.0" />
+      <point x="-63.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.cmd.AddRoomCmd" target="edu.rice.comp504.model.cmd.IUserCmd">
+      <point x="0.0" y="-25.5" />
+      <point x="720.5" y="639.0" />
+      <point x="647.875" y="639.0" />
+      <point x="20.875" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.RoomNotificationsResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="664.0" y="887.0" />
+      <point x="754.0" y="887.0" />
+      <point x="-9.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.cmd.RemoveRoomCmd" target="edu.rice.comp504.model.cmd.IUserCmd">
+      <point x="0.0" y="-25.5" />
+      <point x="907.5" y="629.0" />
+      <point x="689.625" y="629.0" />
+      <point x="62.625" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.NullResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="1195.0" y="867.0" />
+      <point x="808.0" y="867.0" />
+      <point x="45.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.cmd.LeaveRoomCmd" target="edu.rice.comp504.model.cmd.IUserCmd">
+      <point x="0.0" y="-25.5" />
+      <point x="346.5" y="629.0" />
+      <point x="564.375" y="629.0" />
+      <point x="-62.625" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.GroupMessageResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="253.5" y="867.0" />
+      <point x="718.0" y="867.0" />
+      <point x="-45.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.res.RoomUsersResponse" target="edu.rice.comp504.model.res.AResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="862.0" y="887.0" />
+      <point x="772.0" y="887.0" />
+      <point x="9.0" y="25.5" />
+    </edge>
+    <edge source="edu.rice.comp504.model.cmd.JoinRoomCmd" target="edu.rice.comp504.model.cmd.IUserCmd">
+      <point x="0.0" y="-25.5" />
+      <point x="533.5" y="639.0" />
+      <point x="606.125" y="639.0" />
+      <point x="-20.875" y="25.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="751.0" y="238.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

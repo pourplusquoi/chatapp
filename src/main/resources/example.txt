@@ -1,0 +1,13 @@
+login Mack 30 USA Rice
+create Freedom 20 80 USA,Canada,China Rice
+send 0 1 Hello Chris.
+
+login Chris 40 USA Rice
+join 0
+send 0 0 I hate Java.
+
+login Andy 35 Canada Havard
+join 0
+
+login Shakeshack 35 Canada Rice
+join 0
