@@ -1,0 +1,451 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Chatroom</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <script src="js/jquery-3.3.1.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <style type="text/css">
+            body {
+            }
+            /*************************/
+            /*css for chat-room-group*/
+            /*************************/
+            #chat-room-group {
+                width: 5%;
+                height: 100%;
+                float: left;
+                background-color: #272727;
+            }
+
+            #joined-chat-room {
+                width: 100%;
+                height: 39%;
+            }
+
+            #available-chat-room {
+                width: 100%;
+                height: 40%;
+                border-top: 2px dashed white;
+            }
+
+            #create-chat-room {
+                width: 100%;
+                height: 20%;
+            }
+
+            .chat-room-title {
+                width: 100%;
+                height: 10%;
+                font-size: 0.6em;
+            }
+
+            .chat-room-title span {
+                text-align: center;
+                display: block;
+                position: relative;
+                top: 20%;
+                font-size: 1.5em;
+                color: #FFFFFF;
+                font-family: fantasy;
+                letter-spacing: 5px;
+            }
+
+            /**************************/
+            /*****Joined chat room*****/
+            /**************************/
+            .joined-chat-room {
+                width: 80%;
+                height: 30%;
+                margin: auto;
+                margin-top: 8%;
+                border-radius: 50%;
+                border: 1px solid black;
+            }
+
+            .chat-rooms {
+                width: 70%;
+                height: 17%;
+                border-radius: 50%;
+                margin: auto;
+                margin-top: 10%;
+                background-color: #404649;
+            }
+
+            .chat-rooms-selected {
+                width: 70%;
+                height: 17%;
+                border-radius: 20%;
+                margin: auto;
+                margin-top: 10%;
+                background-color: #496BDE;
+            }
+
+            .chat-room-text {
+                font-size: 2.7em;
+                padding-left: 30%;
+                font-weight: bold;
+                color: white;
+            }
+
+            /*****************************/
+            /*****Available chat room*****/
+            /*****************************/
+            #available-chat-room-content {
+                width: 90%;
+                height: 70%;
+                margin: auto;
+                overflow: auto;
+                border-top: 2px solid white;
+            }
+
+            #available-chat-room-content ul {
+                margin-top: 5%;
+                list-style: none;
+            }
+
+            #available-chat-room-content li {
+                text-align: center;
+                font-size: 1.5em;
+                margin-bottom: 0.5em;
+            }
+
+            /**************************/
+            /*****Create chat room*****/
+            /**************************/
+            #chat-rooms-create {
+                width: 70%;
+                height: 35%;
+                border-radius: 50%;
+                margin: auto;
+                margin-top: 10%;
+                border: 2px dashed #8C8C8C;
+                background-color: #272727;
+            }
+
+            #chat-rooms-create span {
+                font-size: 2.4em;
+                color: #ABABAB;
+            }
+
+            #chat-rooms-create:hover {
+                border: 2px dashed white;
+            }
+
+            #chat-rooms-create span:hover {
+                color: white;
+            }
+            /************************/
+            /*css for chat-interface*/
+            /************************/
+            #chat-interface {
+                width: 80%;
+                height: 100%;
+                float: left;
+                background-color: white;
+            }
+
+            #chat-interface-title {
+                width: 100%;
+                height: 6%;
+                background-color: #F0F0F0;
+                border-bottom: 0.1em solid #A4A4A4;
+            }
+
+            #chat-interface-title span {
+                margin-left: 2%;
+                display: block;
+                position: relative;
+                font-size: 2.7em;
+                color: black;
+                font-family: sans-serif;
+                letter-spacing: 5px;
+            }
+            /***chat textarea***/
+            #chat-interface-textarea {
+                width: 100%;
+                height: 65%;
+                border-bottom: 0.1em solid #E1E1E1;
+                background-color: #F0F0F0;
+            }
+
+            /***chat input***/
+            #chat-interface-input {
+                width: 100%;
+                height: 22.4%;
+                background-color: white;
+                text-align: center;
+            }
+
+            #user-input-textarea {
+                width: 94%;
+                height: 70%;
+                margin-top: 2%;
+                resize: none;
+                border: none;
+                outline: none;
+            }
+
+            #send-btn {
+                width: 10%;
+                float: right;
+                margin-right: 5%;
+                margin-top: 1%;
+                letter-spacing: 0.1em;
+                background-color: #C1C1C1;
+            }
+            /**************************/
+            /*css for user-information*/
+            /**************************/
+            #user-information {
+                width: 15%;
+                height: 100%;
+                float: left;
+                background-color: #404649;
+            }
+            /***user profile***/
+            #user-profile {
+                width: 100%;
+                height: 6%;
+                background-color: #496BDE;
+            }
+
+            #user-profile span {
+                text-align: center;
+                display: block;
+                position: relative;
+                top: 20%;
+                font-size: 1.5em;
+                color: white;
+                font-family: fantasy;
+                letter-spacing: 5px;
+            }
+            /*******************/
+            /***oneline-users***/
+            /*******************/
+            .user-group {
+                color: white;
+                margin-left: 2%;
+            }
+            #online-users {
+                width: 100%;
+                height: 86%;
+            }
+
+            #online-users ul{
+                padding: 0;
+                list-style: none;
+            }
+
+            .online-user-list {
+                width: 94%;
+                height: 6%;
+                margin: auto;
+                margin-top: 2%;
+                margin-bottom: 2%;
+                border-radius: 0.5em;
+            }
+
+            .online-user-list:hover {
+                background-color: #676767;
+            }
+
+            .online-user-list img {
+                height: 86%;
+                margin-left: 3%;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            .online-user-list span {
+                width: 100%;
+                font-size: 1.7em;
+                position: relative;
+                margin-left: 3%;
+                color: #E3E3E3;
+                top: 10%;
+            }
+            /***User***/
+            #current-user {
+                width: 100%;
+                height: 8%;
+
+                background-color: #3E3E3E;
+            }
+
+            #the-user {
+                width: 94%;
+                height: 80%;
+                margin: auto;
+                padding-top: 3%;
+                margin-bottom: 2%;
+                border-radius: 0.5em;
+            }
+
+            #the-user img {
+                height: 80%;
+                margin-left: 4%;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            #the-user span {
+                width: 100%;
+                font-size: 1.7em;
+                position: relative;
+                margin-left: 3%;
+                color: white;
+                top: 10%;
+            }
+
+            /***Message***/
+            #group-message {
+                width: 100%;
+                height: 32%;
+                background-color: #F0F0F0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!--*********************************************************************-->
+        <!--***************************Chat Room Group***************************-->
+        <!--*********************************************************************-->
+        <div id="chat-room-group">
+            <!--Joined Chat Rooms-->
+            <div id="joined-chat-room">
+                <div class="chat-room-title">
+                    <span>chatapp</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">D</span>
+                </div>
+                <div class="chat-rooms-selected">
+                    <span class="chat-room-text">R</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">F</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">C</span>
+                </div>
+            </div>
+
+            <!--Aviable Chat Rooms-->
+            <div id="available-chat-room">
+                <div class="chat-rooms">
+                    <span class="chat-room-text">A</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">B</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">C</span>
+                </div>
+                <div class="chat-rooms">
+                    <span class="chat-room-text">D</span>
+                </div>
+            </div>
+
+            <!--Create new chat room button-->
+            <div id="create-chat-room">
+                <div id="chat-rooms-create">
+                    <span class="chat-room-text">+</span>
+                </div>
+            </div>
+        </div>
+        <!--*************************************************************************-->
+        <!--***************************Chat Room User List***************************-->
+        <!--*************************************************************************-->
+        <div id="user-information">
+            <div id="user-profile">
+                <span># Rice Chat Group</span>
+            </div>
+            <!--Online users-->
+            <div id="online-users">
+                <ul>
+                    <span class="user-group">-- OWNER --</span>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/crown.png">
+                            <span>404NotFound</span>
+                        </div>
+                    </li>
+                    <span class="user-group">-- USERS --</span>
+                    <li>
+                        <div class="online-user-list" style="background-color: #676767">
+                            <img src="static/img/user.png" >
+                            <span style="color: white">hd25</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>zjl</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>yang</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>Envision</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>Yanshu</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>TestUser1</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="online-user-list">
+                            <img src="static/img/user.png">
+                            <span>TestUser2</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--Current user-->
+            <div id="current-user">
+                <div id="the-user">
+                    <img src="static/img/user.png">
+                    <span>Harlan0103</span>
+                </div>
+            </div>
+            <!--Group message-->
+            <!--
+            <div id="group-message">
+                <span>/*user: testuser is removed forcely by chat room owner*/</span>
+            </div>
+            -->
+        </div>
+
+
+        <!--***************************Chat interface***************************-->
+        <div id="chat-interface">
+            <div id="chat-interface-title">
+                <span>hd25</span>
+            </div>
+
+            <div id="chat-interface-textarea">
+
+            </div>
+
+            <div id="chat-interface-input">
+                <textarea id="user-input-textarea"></textarea>
+                <button id="send-btn" class="btn btn-default">SEND</button>
+            </div>
+        </div>
+    </body>
+</html>

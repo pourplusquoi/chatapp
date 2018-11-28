@@ -1,0 +1,330 @@
+body {
+    /*background-color: #E5E5E5;*/
+    background-image: url("../static/img/background.jpg");
+    font-family: "serif","sans-serif","cursive","fantasy","monospace";
+
+    /*added by haoran*/
+    background-attachment: fixed;
+    background-size: cover;
+}
+/*************************/
+/***css for login-page****/
+/*************************/
+
+#login-space {
+    width: 70%;
+    height:90%;
+    margin: 3% auto;
+    background-color: white;
+    box-shadow: gray 1px 1px 1px 1px;
+    overflow: hidden;
+    border: 1px solid;
+    border-radius: 20px;
+}
+#login-space .form-group {
+    width: 50%;
+    height: auto;
+    margin: 1em auto;
+    /*padding-top: 10%;*/
+    font-size: 1em;
+}
+#login-btn {
+    width: 100%;
+    height: 6%;
+    align-content: center;
+    font-size: 1em;
+    border-width:1px;
+    border-radius:8px;
+    background-color:white;
+    color:#3f83df;
+    text-decoration:none;
+    display:inline-block;
+    -webkit-transition-duration:0.4s;
+    transition-duration:0.4s; cursor:pointer;
+}
+#login-btn:hover {
+    background-color:#3f83df;
+    color:white;
+}
+/*************************/
+/***css for whole-page****/
+/*************************/
+#whole-page {
+    width: 70%;
+    height: 90%;
+    margin: 3% auto;
+    background-color: white;
+    box-shadow: gray 1px 1px 1px 1px;
+    overflow: hidden;
+    border: 1px solid;
+    background-color: #272727;
+    border-radius: 20px;
+}
+
+/*************************/
+/*******user profile******/
+/*************************/
+#heading-group {
+    width: 100%;
+    height: 5%;
+    background-color: #3f83df;
+    color: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+#heading-logo {
+    width: 16%;
+    height: 5%;
+    margin-left:1.5%;
+    padding-top: 6px;
+    font-size:1.1em;
+    font-weight:bold;
+    text-align: left;
+}
+#app-status-textarea {
+    width: 70%;
+    height: 5%;
+    margin-left: 18%;
+    font-size: 1em;
+    text-align: center;
+    z-index: 5000;
+    color: white;
+    opacity: 0.75;
+}
+#heading-myself {
+    width: 10%;
+    height: 5%;
+    font-size: 1em;
+    margin-left: 88%;
+    text-align: right;
+}
+
+
+/*************************/
+/*css for chat-room-group*/
+/*************************/
+#chat-room-group {
+    width: 24%;
+    height: 95%;
+    float: left;
+    background-color: #f8f8f8;
+    border-bottom-left-radius: 20px;
+    border-right: 1px solid #eeeeee;
+}
+#room-category {
+    width: 100%;
+    height: 6%;
+    font-size: 0.9em;
+}
+#room-category .nav-tabs li a{
+    padding: 10px 6px;
+}
+#joined-room-list {
+    width: 100%;
+    font-size: 0.9em;
+}
+#available-room-list {
+    width: 100%;
+    font-size: 0.9em;
+}
+.pre-scrollable {
+    width: 100%;
+    margin-left: 0;
+}
+.list-group {
+    width: 100%;
+    margin-left: 0;
+}
+.list-group-item {
+    width: 100%;
+}
+#exit-all-btn {
+    width: 90%;
+    margin-left: 5%;
+    align-content: center;
+    font-size: 0.9em;
+    border-width:1px;
+    border-radius:8px;
+    background-color:white;
+    color:#3f83df;
+    text-decoration:none;
+    display:inline-block;
+    -webkit-transition-duration:0.4s;
+    transition-duration:0.4s; cursor:pointer;
+}
+#exit-all-btn:hover {
+    background-color:#3f83df;
+    color:white;
+}
+#create-room-space {
+    width: 100%;
+    font-size: 0.9em;
+}
+#create-room-space .form-group {
+    width: 80%;
+    height: auto;
+    margin: 0.8em auto;
+}
+#cancel-create-btn {
+    width: 45%;
+    align-content: center;
+    border-width:1px;
+    border-radius:8px;
+    background-color:white;
+    color:#3f83df;
+    text-decoration:none;
+    display:inline-block;
+    -webkit-transition-duration:0.4s;
+    transition-duration:0.4s; cursor:pointer;
+}
+#cancel-create-btn:hover {
+    background-color:#3f83df;
+    color:white;
+}
+#create-room-btn {
+    width: 45%;
+    align-content: center;
+    margin-left: 5%;
+    border-width:1px;
+    border-radius:8px;
+    background-color:white;
+    color:#3f83df;
+    text-decoration:none;
+    display:inline-block;
+    -webkit-transition-duration:0.4s;
+    transition-duration:0.4s; cursor:pointer;
+}
+#create-room-btn:hover {
+    background-color:#3f83df;
+    color:white;
+}
+
+/************************/
+/*css for chat-interface*/
+/************************/
+#chat-interface {
+    width: 52%;
+    height: 95%;
+    float: left;
+    background-color: white;
+}
+            
+#chat-interface-title {
+    width: 100%;
+    height: 7%;
+    background-color: white;
+    border-bottom: 1px solid #A4A4A4;
+    text-align: center;
+    font-size: 1em;
+    padding-top: 3%;
+}
+
+/***chat textarea***/
+#chat-interface-textarea {
+    width: 100%;
+    height: 80%;
+    border-bottom: 1px solid #E1E1E1;
+    background-color: #F3F3F3;
+}
+#message-content {
+    font-size: 0.9em;
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    padding: 3px;
+}
+#message-content li {
+    margin-top: 10px;
+    padding-left: 10px;
+    width: 100%;
+    display: block;
+    clear: both;
+    overflow: hidden;
+}
+#message-content li img{
+    width: 25px;
+    height: 25px;
+}
+#message-content li span{
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0px 5px 0 5px;
+    max-width: 70%;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 3px #ccc;
+}
+#message-content li img.imgleft {
+    float: left;
+}
+#message-content li img.imgright {
+    float: right;
+}
+#message-content li span.spanleft {
+    float: left;
+    background: #eaeaea;
+}
+#message-content li span.spanright {
+    float: right;
+    background: #f0ffff;
+}
+#message-content li span.sentsymbol {
+    float: right;
+    color: #3c763d;
+    font-size:8px;
+    padding: 0;
+    margin: 5px 0 5px 0;
+    border:0;
+}
+/***chat input***/
+#chat-interface-input {
+    width: 100%;
+    height: 12%;
+    background-color: white;
+    text-align: center;
+}
+#user-input-textarea {
+    width: 86%;
+    height: 95%;
+    margin-top: 1%;
+    color: #777777;
+    resize: none;
+    border: none;
+    outline: none;
+}
+#send-btn {
+    margin-top: -11%;
+}
+
+/**************************/
+/*css for user-information*/
+/**************************/
+#room-user-group {
+    width: 24%;
+    height: 95%;
+    float: right;
+    background-color: #f8f8f8;
+    border-bottom-right-radius: 20px;
+    border-left: 1px solid #eeeeee;
+}
+#user-list {
+    width: 100%;
+    height: 75%;
+    font-size: 0.9em;
+    /*background-color: green;*/
+}
+#room-status-textarea {
+    width: 90%;
+    margin: auto;
+    height: 18%;
+    display:block;
+    font-size: 0.9em;
+    /*added by haoran*/
+    resize:none;
+}
+            
+/***Message***/
+#group-message {
+    width: 100%;
+    height: 32%;
+    background-color: #F0F0F0;
+}
