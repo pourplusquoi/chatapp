@@ -1,0 +1,254 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Chatroom</title>
+
+        <!--**************Bootstrap and jquery****************-->
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!-- Bootstrap Validator JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.js"></script>
+
+        <link rel="stylesheet" href="css/popover.css"/>
+        <link rel="stylesheet" href="css/index.css"/>
+
+        <script type="text/javascript" src="js/chatapp.js"></script>
+
+    </head>
+    
+    <body>
+        <!--User login page-->
+        <div id="login-space">
+            <div style="width:80%; height:auto; margin:0 auto; text-align:center">
+                <img src="static/img/freedom-logo.png" style="width:60%; height:auto;">
+            </div>
+            <form id="login-form" method="post">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" class="form-control" name="username" value = "user">
+                </div>
+
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="text" class="form-control" name="age" value = 25>
+                </div>
+
+                <div class="form-group">
+                    <label>Region:</label>
+                    <select class="select form-control" id="region-select" name="region">
+                        <option selected="selected" value="America">America</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>School:</label>
+                    <select class="select form-control" id="school-select" name="school">
+                        <option selected="selected" value="Rice">Rice</option>
+                        <option value="Harvard">Harvard</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:2em;">
+                    <button type="submit" id="login-btn" value="login" onclick="validateInput()">Login</button>
+                </div>
+            </form>
+        </div>
+        
+        
+        <!--*************************-->
+        <!--Main page after logged in-->
+        <div id="whole-page">
+
+            <!--*********************************************************************-->
+            <!--*****************************User profile****************************-->
+            <!--*********************************************************************-->
+            <div id="heading-group">
+                <div id="heading-logo">FREEDOM CHAT</div>
+                <div id="app-status-textarea">System Status</div>
+                <div id="heading-myself">
+                    <span class="glyphicon glyphicon-user" name="" id="current-user" value="" data-toggle="popover">User</span>
+                </div>
+            </div>
+
+            <!--*********************************************************************-->
+            <!--***************************Chat Room Group***************************-->
+            <!--*********************************************************************-->
+            <div id="chat-room-group">
+                <div id="room-category">
+                    <ul id="myTab" class="nav nav-tabs">
+                        <li class="active"><a href="#joined-room-list" data-toggle="tab">Joined</a></li>
+                        <li><a href="#available-room-list" data-toggle="tab">Available</a></li>
+                        <li><a href="#create-room-space" data-toggle="tab"><span class="glyphicon glyphicon-plus-sign" style="color:#337ab7"></span> New</a></li>
+                    </ul>
+
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade in active" id="joined-room-list">
+                            <div class="row pre-scrollable">
+                                <ul class="list-group">
+                                </ul>
+                                <button id="exit-all-btn" value="Exit All" onclick="exitAllRooms()">Exit All</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="available-room-list">
+                            <div class="row pre-scrollable">
+                                <ul class="list-group">
+                                    <!-- <li class="list-group-item"><img src="static/img/Letter-G.jpg" style="width:12px; height:12px;"> &nbsp;Game Day</li> -->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="create-room-space">
+                            <div id="create-room-form" method="post">
+                                <div class="form-group">
+                                    <label>Roomname:</label>
+                                    <input type="text" class="form-control" id="cr_roomname" value = "Freedom">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Age Lower Bound(Inclusive):</label>
+                                    <input type="text" class="form-control" id="cr_agelb" value = 20>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Age Upper Bound(Inclusive):</label>
+                                    <input type="text" class="form-control" id="cr_ageub" value = 40>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Region:</label>
+                                    <select multiple class="select form-control" id="region-restriction-select" name="region">
+                                        <option selected="selected" value="America">America</option>
+                                        <option value="Asia">Asia</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>School:</label>
+                                    <select multiple class="select form-control" id="school-restriction-select" name="school">
+                                        <option selected="selected" value="Rice">Rice</option>
+                                        <option value="Harvard">Harvard</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" style="margin-top:2em;">
+                                    <button id="cancel-create-btn" value="cancel" onclick="cancelCreate()">Cancel</button>
+                                    <button id="create-room-btn" value="create" onclick="createRoom()">Create</button>
+                                    <!--<button type="submit" id="create-room-btn" value="create" onclick="createRoom()">Create</button>-->
+                                    <!--<button type="submit" id="create-room-btn" value="create">Create</button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--*********************************************************************-->
+            <!--***************************Chat interface****************************-->
+            <!--*********************************************************************-->
+            <div id="chat-interface">
+                <div id="chat-interface-title">
+                    <span id = "chat-interface-title-span" roomid = "-1" userid = "-1">CHATROOM USER CHAT HISTORY</span>
+                </div>
+
+                <div id="chat-interface-textarea">
+                    <ul id="message-content">
+                        <!--<li><img class="imgleft" src="static/img/user.png"><span class="spanleft">GUI is really awful!!!</span></li>
+                            <li><img class="imgright" src="static/img/user.png"><span class="spanright">I agree!!!</span></li>-->
+                    </ul>
+                </div>
+
+                <div id="chat-interface-input">
+                    <textarea id="user-input-textarea" placeholder="Type your message here"></textarea>
+                    <button id="send-btn" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-send"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!--*************************************************************************-->
+            <!--***************************Chat Room User List***************************-->
+            <!--*************************************************************************-->
+            <div id="room-user-group">
+                <div style="height:6%; text-align: center; padding:4%;">
+                    <label> Users in Chatroom </label>
+                </div>
+                <div id="user-list">
+                    <div class="row pre-scrollable">
+                        <ul class="list-group">
+                            <!--<li class="list-group-item"><img src="static/img/crown.png" style="width:12px; height:12px;"> &nbsp;Team Lead</li>
+                                <li class="list-group-item"><img src="static/img/user.png" style="width:12px; height:12px;"> &nbsp;Tech Lead</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <textarea rows = "5" id="room-status-textarea">This is room status message area</textarea>
+                </div>
+            </div>
+        </div>
+
+            <!--<form id="create-room-form" method="post">-->
+                <!--<div class="form-group">-->
+                    <!--<label>Roomname:</label>-->
+                    <!--<input type="text" class="form-control" name="roomname">-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                    <!--<label>Age Lower Bound(Inclusive):</label>-->
+                    <!--<input type="text" class="form-control" name="agelb">-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                    <!--<label>Age Upper Bound(Inclusive):</label>-->
+                    <!--<input type="text" class="form-control" name="ageub">-->
+                <!--</div>-->
+
+
+                <!--<div class="form-group">-->
+                    <!--<label>Region:</label>-->
+                    <!--<select multiple class="select form-control" id="region-restriction-select" name="region">-->
+                        <!--<option value="Invalid">-&#45;&#45;&#45;&#45;Please Select-&#45;&#45;&#45;&#45;</option>-->
+                        <!--<option value="North America">North America</option>-->
+                        <!--<option value="Asia">Asia</option>-->
+                        <!--<option value="Other Region">Other Location</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                    <!--<label>School:</label>-->
+                    <!--<select multiple class="select form-control" id="school-restriction-select" name="school">-->
+                        <!--<option value="Invalid">-&#45;&#45;&#45;&#45;Please Select-&#45;&#45;&#45;&#45;</option>-->
+                        <!--<optgroup label="North America">-->
+                            <!--<option value="N-Rice University">Rice University</option>-->
+                            <!--<option value="N-Harvard University">Harvard University</option>-->
+                        <!--</optgroup>-->
+                        <!--<optgroup label="Asia">-->
+                            <!--<option value="A-TsingHua University">TsingHua University</option>-->
+                            <!--<option value="A-Beijing University">Beijing University</option>-->
+                        <!--</optgroup>-->
+                        <!--<optgroup label="Other">-->
+                            <!--<option value="O-Other University">Other University</option>-->
+                        <!--</optgroup>-->
+                    <!--</select>-->
+                <!--</div>-->
+
+                <!--<div class="form-group" style="margin-top:2em;">-->
+                    <!--<button id="create-room-btn" value="create" onclick="createRoom()">Create</button>-->
+                    <!--&lt;!&ndash;<button type="submit" id="create-room-btn" value="create" onclick="createRoom()">Create</button>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<button type="submit" id="create-room-btn" value="create">Create</button>&ndash;&gt;-->
+                <!--</div>-->
+            <!--</form>-->
+
+        </div>
+
+        <!---------------------------JavaScript-------------------------------------------->
+        <!--<script src="js/popover.js"></script>-->
+        <!--------------------------------------------------------------------------------->
+    </body>
+</html>
