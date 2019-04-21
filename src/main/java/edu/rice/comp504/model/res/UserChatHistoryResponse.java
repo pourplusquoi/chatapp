@@ -9,25 +9,12 @@ import edu.rice.comp504.model.obj.Message;
  */
 public class UserChatHistoryResponse extends AResponse {
 
-    //chat history
     private List<Message> chatHistory;
-
-    //sender name
     private String sender;
-
-    //receiver name
     private String receiver;
-
-    //sender id
     private int senderId;
-
-    //receiver id
     private int receiverId;
-
-    //roomname
     private String roomName;
-
-    //roomid
     private int roomId;
 
     /**
@@ -53,5 +40,4 @@ public class UserChatHistoryResponse extends AResponse {
         super("UserChatHistory");
         this.chatHistory = chatHistory;
     }
-
 }

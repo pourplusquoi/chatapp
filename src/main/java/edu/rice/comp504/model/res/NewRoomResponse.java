@@ -5,13 +5,8 @@ package edu.rice.comp504.model.res;
  */
 public class NewRoomResponse extends AResponse {
 
-    //room id
     private int roomId;
-
-    //owner id
     private int ownerId;
-
-    //roomname
     private String roomName;
 
     /**

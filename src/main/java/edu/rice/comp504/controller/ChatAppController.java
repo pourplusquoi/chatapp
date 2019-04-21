@@ -45,6 +45,6 @@ public class ChatAppController {
         if (processBuilder.environment().get("PORT") != null) {
             return Integer.parseInt(processBuilder.environment().get("PORT"));
         }
-        return 4567; // return default port if heroku-port isn't set.
+        return 4567; // Return default port if heroku-port isn't set.
     }
 }

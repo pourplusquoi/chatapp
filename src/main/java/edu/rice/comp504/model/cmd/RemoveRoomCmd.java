@@ -15,7 +15,7 @@ import edu.rice.comp504.model.res.UserRoomsResponse;
  */
 public class RemoveRoomCmd implements IUserCmd {
 
-    //the room to be removed
+    // The room to be removed.
     private ChatRoom room;
 
     /**

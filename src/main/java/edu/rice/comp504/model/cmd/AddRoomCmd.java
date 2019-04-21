@@ -16,21 +16,8 @@ import edu.rice.comp504.model.res.UserRoomsResponse;
  */
 public class AddRoomCmd implements IUserCmd {
 
-    //room to be added
+    // The room to be added.
     private ChatRoom room;
-//    private Map<Integer, ChatRoom> rooms;
-
-
-
-//    //private helper function to get id room name map
-//    private HashMap<Integer, String> getRoomMap(List<Integer> roomIds){
-//        HashMap<Integer,String> retRooms = new HashMap<>();
-//        for (Integer roomId : roomIds) {
-//            ChatRoom room = this.rooms.get(roomId);
-//            retRooms.put(roomId,room.getName());
-//        }
-//        return retRooms;
-//    }
 
     /**
      * Constructor.

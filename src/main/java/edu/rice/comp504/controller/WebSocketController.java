@@ -50,18 +50,13 @@ public class WebSocketController {
         JsonObject o = parser.parse(message).getAsJsonObject();
         System.out.println(o);
         String type = o.get("type").toString();
-        //to remove the double quotation mark
+
+        // Remove the double quotation mark.
         type = type.substring(1, type.length() - 1);
 
-
-//        // Assume message will be like "[command] [body]"
-//        String[] tokens = message.split(" ", 2);
-//        String command = tokens[0];
-//        String body = tokens[1];
-
+        // Assume message will be like "[command] [body]".
         String body = message;
         switch (type) {
-//            switch (command) {
             case "login":
                 dis.loadUser(user, body);
                 break;
@@ -69,10 +64,6 @@ public class WebSocketController {
             case "create":
                 dis.loadRoom(user, body);
                 break;
-
-//            case "modify":
-//                dis.modifyRoom(user, body);
-//                break;
 
             case "join":
                 dis.joinRoom(user, body);
@@ -101,10 +92,6 @@ public class WebSocketController {
             case "exitall":
                 dis.exitAllRooms(user, body);
                 break;
-
-//            case "query":
-//                dis.query(user, body);
-//                break;
 
             default: break;
         }

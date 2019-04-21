@@ -9,32 +9,21 @@ import java.util.List;
  */
 public class GroupMessageResponse extends AResponse {
 
-    //chat history list
     private List<Message> chatHistory;
-
-    //sender name
     private String sender;
-
-    //receiver name
     private String receiver;
-
-    //sender id
     private int senderId;
-
-    //receiver id
     private int receiverId;
-
-    //room name
     private String roomName;
-
-    //room id
     private int roomId;
 
     /**
      * Constructor.
-     *
      */
-    public GroupMessageResponse(List<Message> chatHistory, String sender, String receiver, int senderId, int receiverId, String roomName, int roomId) {
+    public GroupMessageResponse(List<Message> chatHistory,
+                                String sender, String receiver,
+                                int senderId, int receiverId,
+                                String roomName, int roomId) {
         super("GroupMessage");
         this.chatHistory = chatHistory;
         this.sender = sender;
@@ -53,5 +42,4 @@ public class GroupMessageResponse extends AResponse {
         super("GroupMessage");
         this.chatHistory = chatHistory;
     }
-
 }

@@ -18,9 +18,10 @@ import edu.rice.comp504.model.res.UserRoomsResponse;
  */
 public class LeaveRoomCmd implements IUserCmd {
 
-    //room be to left by user
+    // The room be to left by user.
     private ChatRoom room;
-    //the user leaving the room
+    
+    // The user leaving the room.
     private User user;
 
     /**

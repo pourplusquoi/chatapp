@@ -5,19 +5,10 @@ package edu.rice.comp504.model.res;
  */
 public class NewUserResponse extends AResponse {
 
-    //userId
     private int userId;
-
-    //username
     private String userName;
-
-    //age
     private int age;
-
-    //region
     private String region;
-
-    //school
     private String school;
 
     /**

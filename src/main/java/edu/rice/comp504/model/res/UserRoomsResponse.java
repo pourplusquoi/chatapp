@@ -11,15 +11,10 @@ import java.util.List;
  */
 public class UserRoomsResponse extends AResponse {
 
-    //userid
     private int userId;
-    //joined room id list
     private List<Integer> joinedRoomIds;
-    //available room id list
     private List<Integer> availableRoomIds;
-    //joined rooms restriction info list
     private HashMap<Integer, RoomRestrictionInfo> joinedRooms;
-    //available rooms restriction info list
     private HashMap<Integer, RoomRestrictionInfo> availableRooms;
 
     /**
@@ -57,5 +52,4 @@ public class UserRoomsResponse extends AResponse {
         this.joinedRoomIds = joinedRoomIds;
         this.availableRoomIds = availableRoomIds;
     }
-
 }

@@ -2,24 +2,21 @@ package edu.rice.comp504.model.obj;
 
 import java.util.Arrays;
 
-/**The ChatRoom class defines a chat room restriction info and private fields of a chat room.
- *
+/**
+ * The ChatRoom class defines a chat room restriction info and private fields of a chat room.
  */
 public class RoomRestrictionInfo {
 
-    //room name of the restriction
-    String name;
-    //age range of the restriction
-    String ageRange;
-    //locations of the restriction
-    String locations;
-    //schools of the restriction
-    String schools;
+    private String name;
+    private String ageRange;
+    private String locations;
+    private String schools;
 
-    /**The constructor.
-     *
+    /**
+     * The constructor.
      */
-    public RoomRestrictionInfo(String name, int ageLB, int ageUB, String[] locations, String[] schools) {
+    public RoomRestrictionInfo(String name, int ageLB, int ageUB,
+                               String[] locations, String[] schools) {
         this.name = name;
         this.ageRange = ageLB + " - " + ageUB;
         this.locations = Arrays.toString(locations);

@@ -5,7 +5,6 @@ package edu.rice.comp504.model.res;
  */
 public class NullResponse extends AResponse {
 
-    //message of null response
     private String message;
 
     /**

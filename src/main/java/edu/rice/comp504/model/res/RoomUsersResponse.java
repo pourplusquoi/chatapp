@@ -7,15 +7,12 @@ import java.util.Map;
  */
 public class RoomUsersResponse extends AResponse {
 
-    //roomid
     private int roomId;
-    Map<Integer, String> users; // Maps from userId to userName
-
-    //ownerid
     private int ownerId;
-
-    //roomname
     private String roomName;
+
+    // Maps from userId to userName.
+    private Map<Integer, String> users;
 
     /**
      * Constructor.
@@ -42,5 +39,4 @@ public class RoomUsersResponse extends AResponse {
         this.ownerId = ownerId;
         this.roomName = roomName;
     }
-
 }

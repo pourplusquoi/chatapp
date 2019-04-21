@@ -7,10 +7,7 @@ import java.util.List;
  */
 public class RoomNotificationsResponse extends AResponse {
 
-    //room id
     private int roomId;
-
-    //all room's notifications
     private List<String> notifications;
 
     /**

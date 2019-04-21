@@ -5,22 +5,11 @@ package edu.rice.comp504.model.obj;
  */
 public class Message {
 
-    //message id
     private int id;
-
-    //message in the room
     private int roomId;
-
-    //sender of the message
     private int senderId;
-
-    //receiver of the message
     private int receiverId;
-
-    //the actual message content
     private String message;
-
-    //flag to indicate if message has been received or not
     private boolean isReceived;
 
     /**

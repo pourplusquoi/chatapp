@@ -18,9 +18,10 @@ import edu.rice.comp504.model.res.UserRoomsResponse;
  */
 public class JoinRoomCmd implements IUserCmd {
 
-    //room to be added
+    // The room to be added.
     private ChatRoom room;
-    //the one join the room
+
+    // The user joining the room.
     private User user;
 
 

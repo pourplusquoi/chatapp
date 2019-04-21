@@ -13,31 +13,14 @@ import edu.rice.comp504.model.cmd.IUserCmd;
  */
 public class User implements Observer {
 
-    //user id
     private int id;
-
-    //user session
     private transient Session session;
-
-    //user name
     private String name;
-
-    //user age
     private int age;
-
-    //user location
     private String location;
-
-    //user school
     private String school;
-
-    //joined rooms id list
     private List<Integer> joinedRoomIds;
-
-    //available rooms id list
     private List<Integer> availableRoomIds;
-
-    //the dispatcher
     private DispatcherAdapter dis;
 
     /**
@@ -65,7 +48,7 @@ public class User implements Observer {
 
         this.dis = dis;
 
-        // load all room id into availableRoomIds list
+        // Load all room id into availableRoomIds list.
         for (ChatRoom room : rooms) {
             this.availableRoomIds.add(room.getId());
         }
@@ -127,26 +110,14 @@ public class User implements Observer {
         return this.joinedRoomIds;
     }
 
-
-    //private helper function to get id room name map
-    private HashMap<Integer, RoomRestrictionInfo> getRoomMap(List<Integer> roomIds) {
-        HashMap<Integer,RoomRestrictionInfo> retRooms = new HashMap<>();
-        for (Integer roomId : roomIds) {
-            ChatRoom room = dis.getRooms().get(roomId);
-            RoomRestrictionInfo roomInfo = new RoomRestrictionInfo(room.getName(), room.getAgeLowerBound(), room.getAgeUpperBound(), room.getLocations(), room.getSchools());
-            retRooms.put(roomId,roomInfo);//room.getName());
-        }
-        return retRooms;
-    }
-
-    //get joinedrooms map
+    // Get joinedrooms map.
     public HashMap<Integer,RoomRestrictionInfo> getJoinedRooms() {
-        return getRoomMap(this.joinedRoomIds);//new HashMap<>();
+        return getRoomMap(this.joinedRoomIds); // new HashMap<>();
     }
 
-    //get availablerooms map
+    // Get availablerooms map.
     public HashMap<Integer,RoomRestrictionInfo> getAvailableRooms() {
-        return getRoomMap(this.availableRoomIds);//new HashMap<>();
+        return getRoomMap(this.availableRoomIds); // new HashMap<>();
     }
 
     /**
@@ -202,5 +173,22 @@ public class User implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         ((IUserCmd) arg).execute(this);
+    }
+
+    // Helper function to get id room name map.
+    private HashMap<Integer, RoomRestrictionInfo> getRoomMap(List<Integer> roomIds) {
+        HashMap<Integer,RoomRestrictionInfo> retRooms = new HashMap<>();
+        for (Integer roomId : roomIds) {
+            ChatRoom room = dis.getRooms().get(roomId);
+            RoomRestrictionInfo roomInfo =
+                new RoomRestrictionInfo(
+                    room.getName(),
+                    room.getAgeLowerBound(),
+                    room.getAgeUpperBound(),
+                    room.getLocations(),
+                    room.getSchools());
+            retRooms.put(roomId,roomInfo);
+        }
+        return retRooms;
     }
 }
