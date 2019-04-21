@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 public abstract class AResponse {
 
-    private String type;    // The type of the response, use class name to denote type,
+    private String type;    // The type of the response, use class name to denote type.
     private long timestamp; // The time when response is being created.
 
     /**
