@@ -103,7 +103,12 @@ public class DispatcherAdapter extends Observable {
         HashMap<Integer,RoomRestrictionInfo> retRooms = new HashMap<>();
         for (Integer roomId : roomIds) {
             ChatRoom room = this.rooms.get(roomId);
-            RoomRestrictionInfo roomInfo = new RoomRestrictionInfo(room.getName(), room.getAgeLowerBound(), room.getAgeUpperBound(), room.getLocations(), room.getSchools());
+            RoomRestrictionInfo roomInfo =
+                new RoomRestrictionInfo(room.getName(),
+                                        room.getAgeLowerBound(),
+                                        room.getAgeUpperBound(),
+                                        room.getLocations(),
+                                        room.getSchools());
             retRooms.put(roomId,roomInfo);//room.getName());
         }
         return retRooms;
@@ -139,13 +144,16 @@ public class DispatcherAdapter extends Observable {
         List<Integer> joinedRoomIds = user.getJoinedRoomIds();
         List<Integer> availableRoomIds = user.getAvailableRoomIds();
 
-        HashMap<Integer, RoomRestrictionInfo> joinedRooms = getRoomMap(joinedRoomIds);//new HashMap<>();
+        HashMap<Integer, RoomRestrictionInfo> joinedRooms =
+            getRoomMap(joinedRoomIds);//new HashMap<>();
 
 
-        HashMap<Integer,RoomRestrictionInfo> availableRooms = getRoomMap(availableRoomIds);//new HashMap<>();
+        HashMap<Integer,RoomRestrictionInfo> availableRooms =
+            getRoomMap(availableRoomIds);//new HashMap<>();
 
 
-        res = new UserRoomsResponse(userId, joinedRoomIds, availableRoomIds, joinedRooms, availableRooms);
+        res = new UserRoomsResponse(userId, joinedRoomIds,
+                                    availableRoomIds, joinedRooms, availableRooms);
         notifyClient(session, res);
 
         this.addObserver(user);
@@ -377,7 +385,8 @@ public class DispatcherAdapter extends Observable {
             if (senderId == receiverId && senderId == room.getOwner().getId()) {
                 System.out.println("here inside send to all");
                 for (int rId : getUsers(roomId).keySet()) {
-                    Message message = new Message(this.nextMessageId, roomId, senderId, rId, "[G]" + raw);
+                    Message message =
+                        new Message(this.nextMessageId, roomId, senderId, rId, "[G]" + raw);
                     
                     // Set to true by default for group message, otherwise might lead to socket to be blocked.
                     message.setIsReceived(true);
@@ -405,7 +414,8 @@ public class DispatcherAdapter extends Observable {
                 }
             } else {
 
-                Message message = new Message(this.nextMessageId, roomId, senderId, receiverId, raw);
+                Message message = new Message(this.nextMessageId, roomId,
+                                              senderId, receiverId, raw);
                 this.messages.put(this.nextMessageId, message);
                 this.nextMessageId++;
 
