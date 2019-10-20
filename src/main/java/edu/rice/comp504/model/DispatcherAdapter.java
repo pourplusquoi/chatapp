@@ -6,16 +6,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.rice.comp504.controller.ChatAppController;
-import edu.rice.comp504.model.obj.RoomRestrictionInfo;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.WriteCallback;
 
+import edu.rice.comp504.controller.ChatAppController;
 import edu.rice.comp504.model.obj.ChatRoom;
 import edu.rice.comp504.model.obj.Message;
+import edu.rice.comp504.model.obj.RoomRestrictionInfo;
 import edu.rice.comp504.model.obj.User;
 import edu.rice.comp504.model.cmd.*;
 import edu.rice.comp504.model.res.*;
-import org.eclipse.jetty.websocket.api.WriteCallback;
 
 /**
  * The dispatcher to handle message received from front end and process in the sever.
